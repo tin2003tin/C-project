@@ -21,6 +21,35 @@ T_Vector t_vector_init(int typeSize)
     vector.typeSize = typeSize;
     return vector;
 }
+
+T_Vector t_vector_clone(const T_Vector *vector)
+{
+    T_Vector clone_ventor;
+    assert(vector != NULL);
+
+    if (vector == NULL)
+    {
+        printf("\x1B[31m"
+               "Vector is null\n"
+               "\x1B[0m");
+        exit(EXIT_FAILURE);
+    }
+    clone_ventor.data = malloc(vector->capacity * vector->typeSize);
+    if (clone_ventor.data == NULL)
+    {
+        printf("\x1B[31m"
+               "Failed to allocate memory for vector data.\n"
+               "\x1B[0m");
+        exit(EXIT_FAILURE);
+    }
+    memcpy(clone_ventor.data, vector->data, vector->size * vector->typeSize);
+    clone_ventor.size = vector->size;
+    clone_ventor.capacity = vector->capacity;
+    clone_ventor.typeSize = vector->typeSize;
+
+    return clone_ventor;
+}
+
 int t_vector_push_back(T_Vector *vector, void *element)
 {
     assert(vector != NULL);
@@ -180,7 +209,7 @@ int t_vector_clear(T_Vector *vector)
     return t_vector_resize(vector, 0);
 }
 
-void *_t_vector_offset(T_Vector *vector, int index)
+void *_t_vector_offset(const T_Vector *vector, int index)
 {
     if (index > vector->size)
     {
@@ -193,7 +222,7 @@ void *_t_vector_offset(T_Vector *vector, int index)
     return vector->data + index * vector->typeSize;
 }
 
-int _t_vector_growable(T_Vector *vector)
+int _t_vector_growable(const T_Vector *vector)
 {
     if (vector->size == vector->capacity)
     {

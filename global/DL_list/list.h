@@ -21,22 +21,23 @@ typedef struct
 } T_DL_List;
 
 T_DL_List t_DL_list_init(size_t typeSize);
+T_DL_List t_DL_list_clone(const T_DL_List *list);
 int t_DL_list_insertAtEnd(T_DL_List *list, void *element);
 int t_DL_list_insertAtBegin(T_DL_List *list, void *element);
 int t_DL_list_insertAt(T_DL_List *list, void *element, size_t index);
 int t_DL_list_deleteAtEnd(T_DL_List *list);
 int t_DL_list_deleteAtBegin(T_DL_List *list);
 int t_DL_list_deleteAt(T_DL_List *list, size_t index);
-void *t_DL_list_getBegin(T_DL_List *list);
-void *t_DL_list_getEnd(T_DL_List *list);
-void *t_DL_list_getAt(T_DL_List *list, size_t index);
+void *t_DL_list_getBegin(const T_DL_List *list);
+void *t_DL_list_getEnd(const T_DL_List *list);
+void *t_DL_list_getAt(const T_DL_List *list, size_t index);
 int t_DL_list_clear(T_DL_List *list);
 int t_DL_list_destroy(T_DL_List *list);
 
 struct T_DL_Node *_t_DL_list_nodeInit(size_t typeSize);
-struct T_DL_Node *_t_DL_list_nodeBegin(T_DL_List *list);
-struct T_DL_Node *_t_DL_list_nodeEnd(T_DL_List *list);
-struct T_DL_Node *_t_DL_list_nodeAt(T_DL_List *list, size_t index);
+struct T_DL_Node *_t_DL_list_nodeBegin(const T_DL_List *list);
+struct T_DL_Node *_t_DL_list_nodeEnd(const T_DL_List *list);
+struct T_DL_Node *_t_DL_list_nodeAt(const T_DL_List *list, size_t index);
 
 #define T_DL_LIST_NEW(type) t_DL_list_init(sizeof(type))
 #define T_DL_LIST_GET_BEGIN_AS(type, list) *(type *)t_DL_list_getBegin(&list)

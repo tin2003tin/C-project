@@ -13,12 +13,13 @@ typedef struct
 
 // contructor
 T_Stack t_stack_init(size_t typeSize);
+T_Stack t_stack_clone(const T_Stack *stack);
 int t_stack_push(T_Stack *stack, void *element);
 int t_stack_pop(T_Stack *stack);
-int t_stack_isEmpty(T_Stack *stack);
-size_t t_stack_getSize(T_Stack *stack);
+int t_stack_isEmpty(const T_Stack *stack);
+size_t t_stack_getSize(const T_Stack *stack);
 int t_stack_clear(T_Stack *stack);
-void *t_stack_peek(T_Stack *stack);
+void *t_stack_peek(const T_Stack *stack);
 void t_stack_destroy(T_Stack *stack);
 
 // utilities

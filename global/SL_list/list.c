@@ -13,7 +13,21 @@ T_SL_List t_SL_list_init(int typeSize)
     list.size = 0;
     return list;
 }
+T_SL_List t_SL_list_clone(const T_SL_List *list)
+{
+    T_SL_List clone_list;
+    clone_list = t_SL_list_init(list->typeSize);
 
+    struct T_SL_Node *current = list->first;
+    while (current != NULL)
+    {
+        t_SL_list_insertAtEnd(&clone_list, current->data);
+        current = current->next;
+    }
+
+    clone_list.size = list->size;
+    return clone_list;
+}
 int t_SL_list_insertAtEnd(T_SL_List *list, void *element)
 {
     assert(list != NULL);
@@ -217,7 +231,7 @@ int t_SL_list_deleteAt(T_SL_List *list, size_t index)
     return T_SL_LIST_SUCCESS;
 }
 
-void *t_SL_list_getBegin(T_SL_List *list)
+void *t_SL_list_getBegin(const T_SL_List *list)
 {
     struct T_SL_Node *target = _t_SL_list_nodeBegin(list);
     if (target->data == NULL)
@@ -226,7 +240,7 @@ void *t_SL_list_getBegin(T_SL_List *list)
     }
     return target->data;
 }
-void *t_SL_list_getEnd(T_SL_List *list)
+void *t_SL_list_getEnd(const T_SL_List *list)
 {
     struct T_SL_Node *target = _t_SL_list_nodeEnd(list);
     if (target->data == NULL)
@@ -235,7 +249,7 @@ void *t_SL_list_getEnd(T_SL_List *list)
     }
     return target->data;
 }
-void *t_SL_list_getAt(T_SL_List *list, size_t index)
+void *t_SL_list_getAt(const T_SL_List *list, size_t index)
 {
     struct T_SL_Node *target = _t_SL_list_nodeAt(list, index);
     if (target->data == NULL)
@@ -299,7 +313,7 @@ struct T_SL_Node *_t_SL_list_nodeInit(size_t typeSize)
     return newNode;
 }
 
-struct T_SL_Node *_t_SL_list_nodeBegin(T_SL_List *list)
+struct T_SL_Node *_t_SL_list_nodeBegin(const T_SL_List *list)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -316,7 +330,7 @@ struct T_SL_Node *_t_SL_list_nodeBegin(T_SL_List *list)
     return list->first;
 }
 
-struct T_SL_Node *_t_SL_list_nodeEnd(T_SL_List *list)
+struct T_SL_Node *_t_SL_list_nodeEnd(const T_SL_List *list)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -333,7 +347,7 @@ struct T_SL_Node *_t_SL_list_nodeEnd(T_SL_List *list)
     return list->end;
 }
 
-struct T_SL_Node *_t_SL_list_nodeAt(T_SL_List *list, size_t index)
+struct T_SL_Node *_t_SL_list_nodeAt(const T_SL_List *list, size_t index)
 {
     assert(list != NULL);
     if (list == NULL)

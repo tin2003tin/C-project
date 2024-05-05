@@ -10,6 +10,13 @@ T_Stack t_stack_init(size_t typeSize)
     return stack;
 }
 
+T_Stack t_stack_clone(const T_Stack *stack)
+{
+    T_Stack clone_stack;
+    clone_stack.vector = t_vector_clone(&(stack->vector));
+    return clone_stack;
+}
+
 int t_stack_push(T_Stack *stack, void *element)
 {
     assert(stack != NULL);
@@ -43,12 +50,12 @@ int t_stack_pop(T_Stack *stack)
     }
     return T_STACK_SUCCESS;
 }
-int t_stack_isEmpty(T_Stack *stack)
+int t_stack_isEmpty(const T_Stack *stack)
 {
     assert(stack != NULL);
     return stack->vector.size == 0;
 }
-size_t t_stack_getSize(T_Stack *stack)
+size_t t_stack_getSize(const T_Stack *stack)
 {
     assert(stack != NULL);
     return stack->vector.size;
@@ -65,7 +72,7 @@ int t_stack_clear(T_Stack *stack)
     return T_STACK_SUCCESS;
 }
 
-void *t_stack_peek(T_Stack *stack)
+void *t_stack_peek(const T_Stack *stack)
 {
     assert(stack != NULL);
     if (stack->vector.data == NULL)

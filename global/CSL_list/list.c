@@ -13,6 +13,24 @@ T_CSL_List t_CSL_list_init(int typeSize)
     list.size = 0;
     return list;
 }
+T_CSL_List t_CSL_list_clone(const T_CSL_List *list)
+{
+    T_CSL_List clone_list;
+    clone_list = t_CSL_list_init(list->typeSize);
+
+    struct T_CSL_Node *current = list->first;
+    if (current != NULL)
+    {
+        do
+        {
+            t_CSL_list_insertAtEnd(&clone_list, current->data);
+            current = current->next;
+        } while (current != list->first);
+    }
+
+    clone_list.size = list->size;
+    return clone_list;
+}
 
 int t_CSL_list_insertAtEnd(T_CSL_List *list, void *element)
 {
@@ -213,7 +231,7 @@ int t_CSL_list_deleteAt(T_CSL_List *list, size_t index)
     return T_CSL_LIST_SUCCESS;
 }
 
-void *t_CSL_list_getBegin(T_CSL_List *list)
+void *t_CSL_list_getBegin(const T_CSL_List *list)
 {
     struct T_CSL_Node *target = _t_CSL_list_nodeBegin(list);
     if (target->data == NULL)
@@ -222,7 +240,7 @@ void *t_CSL_list_getBegin(T_CSL_List *list)
     }
     return target->data;
 }
-void *t_CSL_list_getEnd(T_CSL_List *list)
+void *t_CSL_list_getEnd(const T_CSL_List *list)
 {
     struct T_CSL_Node *target = _t_CSL_list_nodeEnd(list);
     if (target->data == NULL)
@@ -231,7 +249,7 @@ void *t_CSL_list_getEnd(T_CSL_List *list)
     }
     return target->data;
 }
-void *t_CSL_list_getAt(T_CSL_List *list, size_t index)
+void *t_CSL_list_getAt(const T_CSL_List *list, size_t index)
 {
     struct T_CSL_Node *target = _t_CSL_list_nodeAt(list, index);
     if (target->data == NULL)
@@ -295,7 +313,7 @@ struct T_CSL_Node *_t_CSL_list_nodeInit(size_t typeSize)
     return newNode;
 }
 
-struct T_CSL_Node *_t_CSL_list_nodeBegin(T_CSL_List *list)
+struct T_CSL_Node *_t_CSL_list_nodeBegin(const T_CSL_List *list)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -312,7 +330,7 @@ struct T_CSL_Node *_t_CSL_list_nodeBegin(T_CSL_List *list)
     return list->first;
 }
 
-struct T_CSL_Node *_t_CSL_list_nodeEnd(T_CSL_List *list)
+struct T_CSL_Node *_t_CSL_list_nodeEnd(const T_CSL_List *list)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -329,7 +347,7 @@ struct T_CSL_Node *_t_CSL_list_nodeEnd(T_CSL_List *list)
     return list->end;
 }
 
-struct T_CSL_Node *_t_CSL_list_nodeAt(T_CSL_List *list, size_t index)
+struct T_CSL_Node *_t_CSL_list_nodeAt(const T_CSL_List *list, size_t index)
 {
     assert(list != NULL);
     if (list == NULL)

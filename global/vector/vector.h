@@ -24,6 +24,7 @@ typedef struct
 
 // contructor
 T_Vector t_vector_init(int typeSize);
+T_Vector t_vector_clone(const T_Vector *vector);
 
 // destructor
 void t_vector_destroy(T_Vector *vector);
@@ -51,8 +52,8 @@ int t_vector_resize(T_Vector *vector, size_t size);
 int t_vector_clear(T_Vector *vector);
 
 // vector private
-void *_t_vector_offset(T_Vector *vector, int index);
-int _t_vector_growable(T_Vector *vector);
+void *_t_vector_offset(const T_Vector *vector, int index);
+int _t_vector_growable(const T_Vector *vector);
 int _t_vector_expand(T_Vector *vector);
 int _t_vector_move_right(T_Vector *vector, size_t index);
 int _t_vector_move_left(T_Vector *vector, size_t index);
@@ -64,6 +65,5 @@ int _t_vector_move_left(T_Vector *vector, size_t index);
 #define T_VECTOR_ITERATOR_AS(type, iterator) ((type *)iterator.pointer)
 #define T_VECTOR_ITERATOR_VALUE_AS(type, iterator) *((type *)iterator.pointer)
 #define T_VECTOR_GET_AS(type, vector, index) *(type *)(t_vector_get(&vector, index))
-
 
 #endif
