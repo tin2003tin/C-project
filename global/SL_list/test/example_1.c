@@ -18,7 +18,7 @@ int main()
     x = 999;
     t_SL_list_insertAt(&list, &x, 3);
     t_SL_list_deleteAt(&list, 1);
-    T_SL_Node *current = list.first;
+    struct T_SL_Node *current = list.first;
     while (current != NULL)
     {
         printf("%d ", T_SL_LIST_NODE_VALUE_AS(int, current));

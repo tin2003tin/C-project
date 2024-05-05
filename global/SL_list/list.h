@@ -5,11 +5,11 @@
 #define T_SL_LIST_ERROR 1
 #define T_SL_LIST_SUCCESS 0
 
-typedef struct T_SL_Node
+struct T_SL_Node
 {
     void *data;
     struct T_SL_Node *next;
-} T_SL_Node;
+};
 
 typedef struct
 {
@@ -33,9 +33,10 @@ void *t_SL_list_getAt(T_SL_List *list, size_t index);
 int t_SL_list_clear(T_SL_List *list);
 int t_SL_list_destroy(T_SL_List *list);
 
-T_SL_Node *_t_SL_list_nodeBegin(T_SL_List *list);
-T_SL_Node *_t_SL_list_nodeEnd(T_SL_List *list);
-T_SL_Node *_t_SL_list_nodeAt(T_SL_List *list, size_t index);
+struct T_SL_Node *_t_SL_list_nodeInit(size_t typeSize);
+struct T_SL_Node *_t_SL_list_nodeBegin(T_SL_List *list);
+struct T_SL_Node *_t_SL_list_nodeEnd(T_SL_List *list);
+struct T_SL_Node *_t_SL_list_nodeAt(T_SL_List *list, size_t index);
 
 #define T_SL_LIST_NEW(type) t_SL_list_init(sizeof(type))
 #define T_SL_LIST_GET_BEGIN_AS(type, list) *(type *)t_SL_list_getBegin(&list)

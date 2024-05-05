@@ -25,27 +25,12 @@ int t_SL_list_insertAtEnd(T_SL_List *list, void *element)
         return T_SL_LIST_ERROR;
     }
 
-    T_SL_Node *newNode = malloc(sizeof(T_SL_Node));
+    struct T_SL_Node *newNode = _t_SL_list_nodeInit(list->typeSize);
     if (newNode == NULL)
     {
-        printf("\x1B[31m"
-               "Failed to allocate memory for node.\n"
-               "\x1B[0m");
         return T_SL_LIST_ERROR;
     }
-
-    newNode->data = malloc(list->typeSize);
-    if (newNode->data == NULL)
-    {
-        printf("\x1B[31m"
-               "Failed to allocate memory for data.\n"
-               "\x1B[0m");
-        free(newNode);
-        return T_SL_LIST_ERROR;
-    }
-
     memcpy(newNode->data, element, list->typeSize);
-    newNode->next = NULL;
 
     if (list->first == NULL)
     {
@@ -71,27 +56,12 @@ int t_SL_list_insertAtBegin(T_SL_List *list, void *element)
         return T_SL_LIST_ERROR;
     }
 
-    T_SL_Node *newNode = malloc(sizeof(T_SL_Node));
+    struct T_SL_Node *newNode = _t_SL_list_nodeInit(list->typeSize);
     if (newNode == NULL)
     {
-        printf("\x1B[31m"
-               "Failed to allocate memory for node.\n"
-               "\x1B[0m");
         return T_SL_LIST_ERROR;
     }
-
-    newNode->data = malloc(list->typeSize);
-    if (newNode->data == NULL)
-    {
-        printf("\x1B[31m"
-               "Failed to allocate memory for data.\n"
-               "\x1B[0m");
-        free(newNode);
-        return T_SL_LIST_ERROR;
-    }
-
     memcpy(newNode->data, element, list->typeSize);
-    newNode->next = NULL;
 
     if (list->first == NULL)
     {
@@ -130,30 +100,15 @@ int t_SL_list_insertAt(T_SL_List *list, void *element, size_t index)
         return t_SL_list_insertAtEnd(list, element);
     }
 
-    T_SL_Node *newNode = malloc(sizeof(T_SL_Node));
+    struct T_SL_Node *newNode = _t_SL_list_nodeInit(list->typeSize);
     if (newNode == NULL)
     {
-        printf("\x1B[31m"
-               "Failed to allocate memory for node.\n"
-               "\x1B[0m");
         return T_SL_LIST_ERROR;
     }
-
-    newNode->data = malloc(list->typeSize);
-    if (newNode->data == NULL)
-    {
-        printf("\x1B[31m"
-               "Failed to allocate memory for data.\n"
-               "\x1B[0m");
-        free(newNode);
-        return T_SL_LIST_ERROR;
-    }
-
     memcpy(newNode->data, element, list->typeSize);
-    newNode->next = NULL;
 
-    T_SL_Node *target = _t_SL_list_nodeAt(list, index - 1);
-    T_SL_Node *next = target->next;
+    struct T_SL_Node *target = _t_SL_list_nodeAt(list, index - 1);
+    struct T_SL_Node *next = target->next;
 
     target->next = newNode;
     newNode->next = next;
@@ -183,7 +138,7 @@ int t_SL_list_deleteAtEnd(T_SL_List *list)
     }
     else
     {
-        T_SL_Node *current = list->first;
+        struct T_SL_Node *current = list->first;
         while (current->next != list->end)
         {
             current = current->next;
@@ -217,7 +172,7 @@ int t_SL_list_deleteAtBegin(T_SL_List *list)
     }
     else
     {
-        T_SL_Node *current = list->first;
+        struct T_SL_Node *current = list->first;
         list->first = list->first->next;
         free(current->data);
         free(current);
@@ -253,8 +208,8 @@ int t_SL_list_deleteAt(T_SL_List *list, size_t index)
     {
         return t_SL_list_deleteAtEnd(list);
     }
-    T_SL_Node *target = _t_SL_list_nodeAt(list, index - 1);
-    T_SL_Node *next = target->next->next;
+    struct T_SL_Node *target = _t_SL_list_nodeAt(list, index - 1);
+    struct T_SL_Node *next = target->next->next;
     free(target->next->data);
     free(target->next);
     target->next = next;
@@ -264,7 +219,7 @@ int t_SL_list_deleteAt(T_SL_List *list, size_t index)
 
 void *t_SL_list_getBegin(T_SL_List *list)
 {
-    T_SL_Node *target = _t_SL_list_nodeBegin(list);
+    struct T_SL_Node *target = _t_SL_list_nodeBegin(list);
     if (target->data == NULL)
     {
         return NULL;
@@ -273,7 +228,7 @@ void *t_SL_list_getBegin(T_SL_List *list)
 }
 void *t_SL_list_getEnd(T_SL_List *list)
 {
-    T_SL_Node *target = _t_SL_list_nodeEnd(list);
+    struct T_SL_Node *target = _t_SL_list_nodeEnd(list);
     if (target->data == NULL)
     {
         return NULL;
@@ -282,7 +237,7 @@ void *t_SL_list_getEnd(T_SL_List *list)
 }
 void *t_SL_list_getAt(T_SL_List *list, size_t index)
 {
-    T_SL_Node *target = _t_SL_list_nodeAt(list, index);
+    struct T_SL_Node *target = _t_SL_list_nodeAt(list, index);
     if (target->data == NULL)
     {
         return NULL;
@@ -301,10 +256,10 @@ int t_SL_list_clear(T_SL_List *list)
                "\x1B[0m");
         return T_SL_LIST_ERROR;
     }
-    T_SL_Node *current = list->first;
+    struct T_SL_Node *current = list->first;
     while (current != NULL)
     {
-        T_SL_Node *next = current->next;
+        struct T_SL_Node *next = current->next;
         free(current->data);
         free(current);
         current = next;
@@ -320,7 +275,31 @@ int t_SL_list_destroy(T_SL_List *list)
     return t_SL_list_clear(list);
 }
 
-T_SL_Node *_t_SL_list_nodeBegin(T_SL_List *list)
+struct T_SL_Node *_t_SL_list_nodeInit(size_t typeSize)
+{
+    struct T_SL_Node *newNode = malloc(sizeof(struct T_SL_Node));
+    if (newNode == NULL)
+    {
+        printf("\x1B[31m"
+               "Failed to allocate memory for node.\n"
+               "\x1B[0m");
+        return NULL;
+    }
+
+    newNode->data = malloc(typeSize);
+    if (newNode->data == NULL)
+    {
+        printf("\x1B[31m"
+               "Failed to allocate memory for data.\n"
+               "\x1B[0m");
+        free(newNode);
+        return NULL;
+    }
+    newNode->next = NULL;
+    return newNode;
+}
+
+struct T_SL_Node *_t_SL_list_nodeBegin(T_SL_List *list)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -330,7 +309,7 @@ T_SL_Node *_t_SL_list_nodeBegin(T_SL_List *list)
     return list->first;
 }
 
-T_SL_Node *_t_SL_list_nodeEnd(T_SL_List *list)
+struct T_SL_Node *_t_SL_list_nodeEnd(T_SL_List *list)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -340,7 +319,7 @@ T_SL_Node *_t_SL_list_nodeEnd(T_SL_List *list)
     return list->end;
 }
 
-T_SL_Node *_t_SL_list_nodeAt(T_SL_List *list, size_t index)
+struct T_SL_Node *_t_SL_list_nodeAt(T_SL_List *list, size_t index)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -355,7 +334,7 @@ T_SL_Node *_t_SL_list_nodeAt(T_SL_List *list, size_t index)
                list->size);
         return NULL;
     }
-    T_SL_Node *current = list->first;
+    struct T_SL_Node *current = list->first;
     for (size_t i = 0; i < index; i++)
     {
         current = current->next;
