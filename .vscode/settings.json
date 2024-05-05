@@ -1,0 +1,21 @@
+{
+  "files.associations": {
+    "*.css": "tailwindcss",
+    "*.h": "c",
+    "compare": "c",
+    "type_traits": "c",
+    "cstdlib": "c",
+    "array": "c",
+    "string": "c",
+    "string_view": "c",
+    "functional": "c",
+    "tuple": "c",
+    "utility": "c",
+    "deque": "c",
+    "list": "c",
+    "unordered_map": "c",
+    "vector": "c",
+    "initializer_list": "c",
+    "iterator": "c"
+  }
+}
