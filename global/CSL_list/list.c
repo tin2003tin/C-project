@@ -1,21 +1,20 @@
-
 #include "list.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-T_DL_List t_DL_list_init(size_t typeSize)
+T_CSL_List t_CSL_list_init(int typeSize)
 {
-    T_DL_List list;
+    T_CSL_List list;
     list.first = NULL;
     list.end = NULL;
-    list.size = 0;
     list.typeSize = typeSize;
+    list.size = 0;
     return list;
 }
 
-int t_DL_list_insertAtEnd(T_DL_List *list, void *element)
+int t_CSL_list_insertAtEnd(T_CSL_List *list, void *element)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -23,98 +22,97 @@ int t_DL_list_insertAtEnd(T_DL_List *list, void *element)
         printf("\x1B[31m"
                "list is null\n"
                "\x1B[0m");
-        return T_DL_LIST_ERROR;
+        return T_CSL_LIST_ERROR;
     }
-    struct T_DL_Node *newNode = _t_DL_list_nodeInit(list->typeSize);
+
+    struct T_CSL_Node *newNode = _t_CSL_list_nodeInit(list->typeSize);
     if (newNode == NULL)
     {
-        return T_DL_LIST_ERROR;
+        return T_CSL_LIST_ERROR;
     }
     memcpy(newNode->data, element, list->typeSize);
 
     if (list->first == NULL)
     {
         list->first = newNode;
+        newNode->next = newNode;
     }
     else
     {
         list->end->next = newNode;
-        newNode->previous = list->end;
+        newNode->next = list->first;
     }
 
     list->end = newNode;
     list->size++;
-    return T_DL_LIST_SUCCUESS;
+    return T_CSL_LIST_SUCCESS;
 }
 
-int t_DL_list_insertAtBegin(T_DL_List *list, void *element)
+int t_CSL_list_insertAtBegin(T_CSL_List *list, void *element)
 {
-    assert(list != NULL);
     if (list == NULL)
     {
         printf("\x1B[31m"
                "list is null\n"
                "\x1B[0m");
-        return T_DL_LIST_ERROR;
+        return T_CSL_LIST_ERROR;
     }
-    struct T_DL_Node *newNode = _t_DL_list_nodeInit(list->typeSize);
+
+    struct T_CSL_Node *newNode = _t_CSL_list_nodeInit(list->typeSize);
     if (newNode == NULL)
     {
-        return T_DL_LIST_ERROR;
+        return T_CSL_LIST_ERROR;
     }
     memcpy(newNode->data, element, list->typeSize);
+
     if (list->first == NULL)
     {
+        list->first = newNode;
         list->end = newNode;
+        newNode->next = newNode;
     }
     else
     {
-        list->first->previous = newNode;
         newNode->next = list->first;
+        list->first = newNode;
+        list->end->next = newNode;
     }
-    list->first = newNode;
     list->size++;
-    return T_DL_LIST_SUCCUESS;
+    return T_CSL_LIST_SUCCESS;
 }
 
-int t_DL_list_insertAt(T_DL_List *list, void *element, size_t index)
+int t_CSL_list_insertAt(T_CSL_List *list, void *element, size_t index)
 {
     assert(list != NULL);
-
-    if (index > list->size)
-    {
-        printf("\x1B[31m"
-               "Index out of bounds. size: %zu\n"
-               "\x1B[0m",
-               list->size);
-        return T_DL_LIST_ERROR;
-    }
+    index = index % (list->size + 1);
     if (index == 0)
     {
-        return t_DL_list_insertAtBegin(list, element);
+        return t_CSL_list_insertAtBegin(list, element);
     }
+
     if (index == list->size)
     {
-        return t_DL_list_insertAtEnd(list, element);
+        return t_CSL_list_insertAtEnd(list, element);
     }
-    struct T_DL_Node *newNode = _t_DL_list_nodeInit(list->typeSize);
+
+    struct T_CSL_Node *newNode = _t_CSL_list_nodeInit(list->typeSize);
     if (newNode == NULL)
     {
-        return T_DL_LIST_ERROR;
+        return T_CSL_LIST_ERROR;
     }
     memcpy(newNode->data, element, list->typeSize);
-    struct T_DL_Node *target = _t_DL_list_nodeAt(list, index - 1);
-    struct T_DL_Node *next = target->next;
+
+    struct T_CSL_Node *target = _t_CSL_list_nodeAt(list, index - 1);
+    struct T_CSL_Node *next = target->next;
 
     target->next = newNode;
-    newNode->previous = target;
     newNode->next = next;
-    next->previous = newNode;
-
     list->size++;
-    return T_DL_LIST_SUCCUESS;
+
+    return T_CSL_LIST_SUCCESS;
 }
-int t_DL_list_deleteAtEnd(T_DL_List *list)
+
+int t_CSL_list_deleteAtEnd(T_CSL_List *list)
 {
     assert(list != NULL);
 
@@ -123,121 +121,127 @@ int t_DL_list_deleteAtEnd(T_DL_List *list)
         printf("\x1B[31m"
                "list->end is null\n"
                "\x1B[0m");
-        return T_DL_LIST_ERROR;
+        return T_CSL_LIST_ERROR;
     }
+
     if (list->first == list->end)
     {
-        free(list->end->data);
-        free(list->end);
+        free(list->first->data);
+        free(list->first);
         list->first = NULL;
         list->end = NULL;
     }
     else
     {
-        struct T_DL_Node *newEnd = list->end->previous;
-        newEnd->next = NULL;
+        struct T_CSL_Node *current = list->first;
+        while (current->next != list->end)
+        {
+            current = current->next;
+        }
         free(list->end->data);
         free(list->end);
-        list->end = newEnd;
+        current->next = list->first;
+        list->end = current;
     }
     list->size--;
-    return T_DL_LIST_SUCCUESS;
+    return T_CSL_LIST_SUCCESS;
 }
-int t_DL_list_deleteAtBegin(T_DL_List *list)
+
+int t_CSL_list_deleteAtBegin(T_CSL_List *list)
 {
     assert(list != NULL);
 
     if (list->first == NULL)
     {
         printf("\x1B[31m"
-               "list->end is null\n"
+               "list->first is null\n"
                "\x1B[0m");
-        return T_DL_LIST_ERROR;
+        return T_CSL_LIST_ERROR;
     }
     if (list->first == list->end)
     {
-        free(list->end->data);
-        free(list->end);
+        free(list->first->data);
+        free(list->first);
         list->first = NULL;
         list->end = NULL;
     }
     else
     {
-        struct T_DL_Node *newFirst = list->first->next;
-        newFirst->previous = NULL;
-        free(list->first->data);
-        free(list->first);
-        list->first = newFirst;
+        struct T_CSL_Node *current = list->first;
+        list->first = list->first->next;
+        free(current->data);
+        free(current);
+        list->end->next = list->first;
     }
     list->size--;
-    return T_DL_LIST_SUCCUESS;
+    return T_CSL_LIST_SUCCESS;
 }
-int t_DL_list_deleteAt(T_DL_List *list, size_t index)
+
+int t_CSL_list_deleteAt(T_CSL_List *list, size_t index)
 {
     assert(list != NULL);
 
+    if (list->first == NULL)
+    {
+        printf("\x1B[31m"
+               "list->first is null\n"
+               "\x1B[0m");
+        return T_CSL_LIST_ERROR;
+    }
     if (index >= list->size)
     {
         printf("\x1B[31m"
                "Index out of bounds. size: %zu\n"
                "\x1B[0m",
                list->size);
-        return T_DL_LIST_ERROR;
-    }
-    if (list->first == NULL)
-    {
-        printf("\x1B[31m"
-               "list->first is null\n"
-               "\x1B[0m");
-        return T_DL_LIST_ERROR;
+        return T_CSL_LIST_ERROR;
     }
     if (index == 0)
     {
-        return t_DL_list_deleteAtBegin(list);
+        return t_CSL_list_deleteAtBegin(list);
     }
     if (index == list->size - 1)
     {
-        return t_DL_list_deleteAtEnd(list);
+        return t_CSL_list_deleteAtEnd(list);
     }
-    struct T_DL_Node *target = _t_DL_list_nodeAt(list, index);
-    struct T_DL_Node *previous = target->previous;
-    struct T_DL_Node *next = target->next;
-    free(target->data);
-    free(target);
-    previous->next = next;
-    next->previous = previous;
+    struct T_CSL_Node *target = _t_CSL_list_nodeAt(list, index - 1);
+    struct T_CSL_Node *next = target->next->next;
+    free(target->next->data);
+    free(target->next);
+    target->next = next;
     list->size--;
-    return T_DL_LIST_SUCCUESS;
+    return T_CSL_LIST_SUCCESS;
 }
 
-void *t_DL_list_getBegin(T_DL_List *list)
+void *t_CSL_list_getBegin(T_CSL_List *list)
 {
-    struct T_DL_Node *target = _t_DL_list_nodeBegin(list);
+    struct T_CSL_Node *target = _t_CSL_list_nodeBegin(list);
     if (target->data == NULL)
     {
         return NULL;
     }
     return target->data;
 }
-void *t_DL_list_getEnd(T_DL_List *list)
+void *t_CSL_list_getEnd(T_CSL_List *list)
 {
-    struct T_DL_Node *target = _t_DL_list_nodeEnd(list);
+    struct T_CSL_Node *target = _t_CSL_list_nodeEnd(list);
     if (target->data == NULL)
     {
         return NULL;
     }
     return target->data;
 }
-void *t_DL_list_getAt(T_DL_List *list, size_t index)
+void *t_CSL_list_getAt(T_CSL_List *list, size_t index)
 {
-    struct T_DL_Node *target = _t_DL_list_nodeAt(list, index);
+    struct T_CSL_Node *target = _t_CSL_list_nodeAt(list, index);
     if (target->data == NULL)
     {
         return NULL;
     }
     return target->data;
 }
-int t_DL_list_clear(T_DL_List *list)
+
+int t_CSL_list_clear(T_CSL_List *list)
 {
     assert(list != NULL);
 
@@ -246,29 +250,30 @@ int t_DL_list_clear(T_DL_List *list)
         printf("\x1B[31m"
                "list->first is null\n"
                "\x1B[0m");
-        return T_DL_LIST_ERROR;
+        return T_CSL_LIST_ERROR;
     }
-    struct T_DL_Node *current = list->first;
-    while (current != NULL)
+    struct T_CSL_Node *current = list->first;
+    do
     {
-        struct T_DL_Node *next = current->next;
+        struct T_CSL_Node *next = current->next;
         free(current->data);
         free(current);
         current = next;
-    }
+    } while (current != list->first);
     list->first = NULL;
     list->end = NULL;
     list->size = 0;
-    return T_DL_LIST_SUCCUESS;
-}
-int t_DL_list_destroy(T_DL_List *list)
-{
-    return t_DL_list_clear(list);
+    return T_CSL_LIST_SUCCESS;
 }
 
-struct T_DL_Node *_t_DL_list_nodeInit(size_t typeSize)
+int t_CSL_list_destroy(T_CSL_List *list)
 {
-    struct T_DL_Node *newNode = malloc(sizeof(struct T_DL_Node));
+    return t_CSL_list_clear(list);
+}
+
+struct T_CSL_Node *_t_CSL_list_nodeInit(size_t typeSize)
+{
+    struct T_CSL_Node *newNode = malloc(sizeof(struct T_CSL_Node));
     if (newNode == NULL)
     {
         printf("\x1B[31m"
@@ -287,11 +292,10 @@ struct T_DL_Node *_t_DL_list_nodeInit(size_t typeSize)
         return NULL;
     }
     newNode->next = NULL;
-    newNode->previous = NULL;
     return newNode;
 }
 
-struct T_DL_Node *_t_DL_list_nodeBegin(T_DL_List *list)
+struct T_CSL_Node *_t_CSL_list_nodeBegin(T_CSL_List *list)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -307,7 +311,8 @@ struct T_DL_Node *_t_DL_list_nodeBegin(T_DL_List *list)
     }
     return list->first;
 }
-struct T_DL_Node *_t_DL_list_nodeEnd(T_DL_List *list)
+
+struct T_CSL_Node *_t_CSL_list_nodeEnd(T_CSL_List *list)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -323,7 +328,8 @@ struct T_DL_Node *_t_DL_list_nodeEnd(T_DL_List *list)
     }
     return list->end;
 }
-struct T_DL_Node *_t_DL_list_nodeAt(T_DL_List *list, size_t index)
+
+struct T_CSL_Node *_t_CSL_list_nodeAt(T_CSL_List *list, size_t index)
 {
     assert(list != NULL);
     if (list == NULL)
@@ -337,15 +343,8 @@ struct T_DL_Node *_t_DL_list_nodeAt(T_DL_List *list, size_t index)
                "\x1B[0m");
         return NULL;
     }
-    if (index >= list->size)
-    {
-        printf("\x1B[31m"
-               "Index out of bounds. size: %d\n"
-               "\x1B[0m",
-               list->size);
-        return NULL;
-    }
-    struct T_DL_Node *current = list->first;
+    index = index % list->size;
+    struct T_CSL_Node *current = list->first;
     for (size_t i = 0; i < index; i++)
     {
         current = current->next;

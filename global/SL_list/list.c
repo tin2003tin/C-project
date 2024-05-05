@@ -306,6 +306,13 @@ struct T_SL_Node *_t_SL_list_nodeBegin(T_SL_List *list)
     {
         return NULL;
     }
+    if (list->size == 0)
+    {
+        printf("\x1B[31m"
+               "List is empty.\n"
+               "\x1B[0m");
+        return NULL;
+    }
     return list->first;
 }
 
@@ -316,6 +323,13 @@ struct T_SL_Node *_t_SL_list_nodeEnd(T_SL_List *list)
     {
         return NULL;
     }
+    if (list->size == 0)
+    {
+        printf("\x1B[31m"
+               "List is empty.\n"
+               "\x1B[0m");
+        return NULL;
+    }
     return list->end;
 }
 
@@ -324,6 +338,13 @@ struct T_SL_Node *_t_SL_list_nodeAt(T_SL_List *list, size_t index)
     assert(list != NULL);
     if (list == NULL)
     {
+        return NULL;
+    }
+    if (list->size == 0)
+    {
+        printf("\x1B[31m"
+               "List is empty.\n"
+               "\x1B[0m");
         return NULL;
     }
     if (index >= list->size)
