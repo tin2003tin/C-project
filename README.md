@@ -1,1 +1,1 @@
-## This is pure C lanaguage
+## This is pure C language
