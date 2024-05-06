@@ -3,69 +3,64 @@
 
 #include "../vector.h"
 
-// gcc .\global\vector\test\example.c global/vector/vector.c -o out/vector_example_1
 int main(int argc, const char *argv[])
 {
-    T_Vector vector = t_vector_init(sizeof(int));
+    T_Vector *vector = t_vector_init(sizeof(int));
+    printf("vector_capacity: %zu\n", t_vector_get_capacity(vector));
+    printf("vector_size: %zu\n", t_vector_get_size(vector));
     int x = 12;
-
-    t_vector_push_back(&vector, &x);
-
-    printf("vector_capacity: %zu\n", vector.capacity);
-    printf("vector_size: %zu\n", vector.size);
-
-    printf("1: %d\n", *((int *)vector.data));
-
-    x = 123;
-
-    t_vector_push_back(&vector, &x);
-    printf("vector_capacity: %zu\n", vector.capacity);
-    printf("vector_size: %zu\n", vector.size);
-
+    t_vector_push_back(vector, &x);
+    x = 10;
+    t_vector_push_back(vector, &x);
     x = 999;
-    t_vector_push_back(&vector, &x);
-    printf("vector_capacity: %zu\n", vector.capacity);
-    printf("vector_size: %zu\n", vector.size);
+    t_vector_push_front(vector, &x);
+    x = 1;
+    t_vector_insert(vector, &x, t_vector_iter_begin(vector));
+    x = 2;
+    t_vector_insert(vector, &x, t_vector_iter_end(vector));
 
     T_VECTOR_FOR_EACH(iter, vector)
     {
-        printf(": %d\n", T_VECTOR_ITERATOR_VALUE_AS(int, iter));
+        printf("%d ", T_VECTOR_ITERATOR_VALUE_AS(int, iter));
     }
-    printf("vector_size: %zu\n", vector.size);
-    printf("vector_capacity: %zu\n", vector.capacity);
-    x = 101;
-    printf("after\n");
-    t_vector_push_front(&vector, &x);
+    printf("\n");
+
     x = 555;
-    int err = t_vector_insert(&vector, &x, 3);
-    if (err == T_VECTOR_ERROR)
-    {
-        printf("error naja\n");
-        return 0;
-    }
+    t_vector_insert(vector, &x, t_vector_iter_at(vector, 2));
 
+    printf("After insert at index 2\n");
     T_VECTOR_FOR_EACH(iter, vector)
     {
-        printf(": %d\n", T_VECTOR_ITERATOR_VALUE_AS(int, iter));
+        printf("%d ", T_VECTOR_ITERATOR_VALUE_AS(int, iter));
     }
-    printf("vector_size: %zu\n", vector.size);
-    printf("vector_capacity: %zu\n", vector.capacity);
+    printf("\n");
 
-    T_Iterator iter = t_vector_begin(&vector);
-    printf("Test: %d\n", *T_VECTOR_ITERATOR_AS(int, iter));
-    // t_vector_pop_front(&vector);
-    // t_vector_erase(&vector,4);
-    // t_vector_resize(&vector, 0);
-    t_vector_clear(&vector);
-    t_vector_push_back(&vector, &x);
+    printf("vector_capacity: %zu\n", t_vector_get_capacity(vector));
+    printf("vector_size: %zu\n", t_vector_get_size(vector));
 
-    printf("deleted\n");
+    t_vector_pop_back(vector);
+    t_vector_pop_front(vector);
+    t_vector_erase(vector, t_vector_iter_at(vector, 1));
+
+    printf("After deleting\n");
     T_VECTOR_FOR_EACH(iter, vector)
     {
-        printf(": %d\n", T_VECTOR_ITERATOR_VALUE_AS(int, iter));
+        printf("%d ", T_VECTOR_ITERATOR_VALUE_AS(int, iter));
     }
-    printf("vector_size: %zu\n", vector.size);
-    printf("vector_capacity: %zu\n", vector.capacity);
+    printf("\n");
+
+    printf("%d\n", T_VECTOR_GET_VALUE_AS(int, vector, 0));
+    printf("%d\n", *(int *)T_VECTOR_ITERATOR_AS(int, t_vector_iter_begin(vector)));
+    printf("%d\n", T_VECTOR_ITERATOR_VALUE_AS(int, t_vector_iter_begin(vector)));
+    printf("After clear\n");
+    t_vector_clear(vector);
+    printf("vector_capacity: %zu\n", t_vector_get_capacity(vector));
+    printf("vector_size: %zu\n", t_vector_get_size(vector));
+    printf("Try to destroy vector\n");
     t_vector_destroy(&vector);
+    if (vector == NULL)
+    {
+        printf("destroy completely");
+    }
     return 0;
 }

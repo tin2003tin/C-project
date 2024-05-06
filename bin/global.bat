@@ -20,12 +20,12 @@ if errorlevel 1 (
   exit /b 1
 )
 
-rem Compile stack.c into stack.o
-gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\stack\stack.c" -o "%BIN_PATH%\out\stack.o"
-if errorlevel 1 (
-  echo %RED%== Error: Compilation of stack.c failed%NO_COLOR%
-  exit /b 1
-)
+@REM rem Compile stack.c into stack.o
+@REM gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\stack\stack.c" -o "%BIN_PATH%\out\stack.o"
+@REM if errorlevel 1 (
+@REM   echo %RED%== Error: Compilation of stack.c failed%NO_COLOR%
+@REM   exit /b 1
+@REM )
 
 rem Compile sl_list.c into sl_list.o
 gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\SL_list\list.c" -o "%BIN_PATH%\out\SL_list.o"
@@ -48,15 +48,15 @@ if errorlevel 1 (
   exit /b 1
 )
 
-rem Compile queue.c into queue.o
-gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\queue\queue.c" -o "%BIN_PATH%\out\queue.o"
-if errorlevel 1 (
-  echo %RED%== Error: Compilation of queue.c failed%NO_COLOR%
-  exit /b 1
-)
+@REM rem Compile queue.c into queue.o
+@REM gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\queue\queue.c" -o "%BIN_PATH%\out\queue.o"
+@REM if errorlevel 1 (
+@REM   echo %RED%== Error: Compilation of queue.c failed%NO_COLOR%
+@REM   exit /b 1
+@REM )
 
 rem Combine vector.o and stack.o into global.o
-ld.exe -r "%BIN_PATH%\out\vector.o" "%BIN_PATH%\out\stack.o" "%BIN_PATH%\out\SL_list.o" "%BIN_PATH%\out\DL_list.o" "%BIN_PATH%\out\CSL_list.o"  "%BIN_PATH%\out\queue.o" -o "%BIN_PATH%\out\global.o"
+ld.exe -r "%BIN_PATH%\out\vector.o" "%BIN_PATH%\out\SL_list.o" "%BIN_PATH%\out\DL_list.o" "%BIN_PATH%\out\CSL_list.o"  -o "%BIN_PATH%\out\global.o"
 if errorlevel 1 (
   echo %RED%== Error: Linking failed%NO_COLOR%
   exit /b 1
