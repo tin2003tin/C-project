@@ -339,11 +339,6 @@ T_Iterator t_vector_iter_at(const T_Vector *vector, size_t index)
     iter.typeSize = vector->typeSize;
     return iter;
 }
-void *t_vector_iter_get_pointer(const T_Iterator *iterator)
-{
-    assert(iterator != NULL);
-    return iterator->pointer;
-}
 
 void t_vector_iter_next(T_Iterator *iterator)
 {

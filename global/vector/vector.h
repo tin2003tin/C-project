@@ -42,7 +42,6 @@ int t_vector_clear(T_Vector *vector);
 T_Iterator t_vector_iter_begin(const T_Vector *vector);
 T_Iterator t_vector_iter_end(const T_Vector *vector);
 T_Iterator t_vector_iter_at(const T_Vector *vector, size_t index);
-void *t_vector_iter_get_pointer(const T_Iterator *iterator);
 void t_vector_iter_next(T_Iterator *iterator);
 void t_vector_iter_previous(T_Iterator *iterator);
 
