@@ -3,19 +3,33 @@
 
 #include <stddef.h>
 
-// Forward declaration of structs
-typedef struct T_Vector T_Vector;
+// Vector Type
+typedef struct T_Vector
+{
+	void *data;
+	size_t typeSize;
+
+	size_t capacity;
+	size_t size;
+
+	size_t growCond;
+	size_t growRate;
+
+	size_t shrinkCond;
+	size_t shrinkRate;
+} T_Vector;
+// Vector_Iterator Type
 typedef struct T_Iterator
 {
 	void *pointer;
 	size_t typeSize;
 } T_Iterator;
 
-// Constructor and destructor
-T_Vector *t_vector_init(size_t typeSize);
-T_Vector *t_vector_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate);
-T_Vector *t_vector_clone(const T_Vector *vector);
-void t_vector_destroy(T_Vector **vectorPtr);
+// Constructor and Destructor
+T_Vector t_vector_init(size_t typeSize);
+T_Vector t_vector_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate);
+T_Vector t_vector_clone(const T_Vector *vector);
+void t_vector_destroy(T_Vector *vector);
 
 // Get Vector details
 size_t t_vector_get_size(const T_Vector *vector);

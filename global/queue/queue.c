@@ -15,30 +15,12 @@
 #define T_QUEUE_ERROR 1
 #define T_QUEUE_SUCCUESS 0
 
-struct T_Queue
-{
-    void *data;
-    size_t typeSize;
-
-    void *first;
-    void *roar;
-
-    size_t capacity;
-    size_t size;
-
-    size_t growCond;
-    size_t growRate;
-
-    size_t shrinkCond;
-    size_t shrinkRate;
-};
-
-T_Queue *t_queue_init(size_t typeSize)
+T_Queue t_queue_init(size_t typeSize)
 {
     return t_queue_custom_init(typeSize, T_QUEUE_DEFAULT_CAPACITY, T_QUEUE_GROW_COND, T_QUEUE_GROW_RATE, T_QUEUE_SHRINK_COND, T_QUEUE_SHRINK_RATE);
 }
 
-T_Queue *t_queue_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate)
+T_Queue t_queue_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate)
 {
     if (capacity == 0)
     {
@@ -76,32 +58,23 @@ T_Queue *t_queue_custom_init(size_t typeSize, size_t capacity, size_t growCond, 
         exit(EXIT_FAILURE);
     }
 
-    struct T_Queue *queue = malloc(sizeof(T_Queue));
-    if (queue == NULL)
-    {
-        printf("\x1B[31m"
-               "Failed to allocate memory for queue.\n"
-               "\x1B[0m");
-        exit(EXIT_FAILURE);
-    }
-
-    queue->data = malloc(capacity * typeSize);
-    if (queue->data == NULL)
+    T_Queue queue;
+    queue.data = malloc(capacity * typeSize);
+    if (queue.data == NULL)
     {
         printf("\x1B[31m"
                "Failed to allocate memory for queue data.\n"
                "\x1B[0m");
-        free(queue);
         exit(EXIT_FAILURE);
     }
 
-    queue->typeSize = typeSize;
-    queue->capacity = capacity;
-    queue->size = 0;
-    queue->growCond = growCond;
-    queue->growRate = growRate;
-    queue->shrinkCond = shrinkCond;
-    queue->shrinkRate = shrinkRate;
+    queue.typeSize = typeSize;
+    queue.capacity = capacity;
+    queue.size = 0;
+    queue.growCond = growCond;
+    queue.growRate = growRate;
+    queue.shrinkCond = shrinkCond;
+    queue.shrinkRate = shrinkRate;
 
     return queue;
 }
@@ -112,7 +85,15 @@ void t_queue_destroy(T_Queue *queue)
     {
         free(queue->data);
         queue->data = NULL;
-        free(queue);
+        queue->capacity = 0;
+        queue->first = NULL;
+        queue->roar = NULL;
+        queue->growCond = 0;
+        queue->growRate = 0;
+        queue->shrinkCond = 0;
+        queue->shrinkRate = 0;
+        queue->typeSize = 0;
+        queue->size = 0;
     }
 }
 

@@ -16,27 +16,12 @@
 #define T_VECTOR_ERROR 1
 #define T_VECTOR_SUCCESS 0
 
-struct T_Vector
-{
-    void *data;
-    size_t typeSize;
-
-    size_t capacity;
-    size_t size;
-
-    size_t growCond;
-    size_t growRate;
-
-    size_t shrinkCond;
-    size_t shrinkRate;
-};
-
-T_Vector *t_vector_init(size_t typeSize)
+T_Vector t_vector_init(size_t typeSize)
 {
     return t_vector_custom_init(typeSize, T_VECTOR_DEFAULT_CAPACITY, T_VECTOR_GROW_COND, T_VECTOR_GROW_RATE, T_VECTOR_SHRINK_COND, T_VECTOR_SHRINK_RATE);
 }
 
-T_Vector *t_vector_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate)
+T_Vector t_vector_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate)
 {
     if (capacity == 0)
     {
@@ -73,40 +58,32 @@ T_Vector *t_vector_custom_init(size_t typeSize, size_t capacity, size_t growCond
                "\x1B[0m");
         exit(EXIT_FAILURE);
     }
-    T_Vector *vector = malloc(sizeof(T_Vector));
-    if (vector == NULL)
-    {
-        printf("\x1B[31m"
-               "Failed to allocate memory for vector.\n"
-               "\x1B[0m");
-        exit(EXIT_FAILURE);
-    }
+    T_Vector vector;
 
-    vector->data = malloc(capacity * typeSize);
-    if (vector->data == NULL)
+    vector.data = malloc(capacity * typeSize);
+    if (vector.data == NULL)
     {
         printf("\x1B[31m"
                "Failed to allocate memory for vector data.\n"
                "\x1B[0m");
-        free(vector);
         exit(EXIT_FAILURE);
     }
-
-    vector->typeSize = typeSize;
-    vector->capacity = capacity;
-    vector->size = 0;
-    vector->growCond = growCond;
-    vector->growRate = growRate;
-    vector->shrinkCond = shrinkCond;
-    vector->shrinkRate = shrinkRate;
+    vector.typeSize = typeSize;
+    vector.capacity = capacity;
+    vector.size = 0;
+    vector.growCond = growCond;
+    vector.growRate = growRate;
+    vector.shrinkCond = shrinkCond;
+    vector.shrinkRate = shrinkRate;
 
     return vector;
 }
-T_Vector *t_vector_clone(const T_Vector *vector)
+T_Vector t_vector_clone(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
-    T_Vector *clone_vector = malloc(sizeof(T_Vector));
+    T_Vector clone_vector = *vector;
     if (vector == NULL)
     {
         printf("\x1B[31m"
@@ -115,74 +92,81 @@ T_Vector *t_vector_clone(const T_Vector *vector)
         exit(EXIT_FAILURE);
     }
 
-    memcpy(clone_vector, vector, sizeof(T_Vector));
-
-    clone_vector->data = malloc(vector->capacity * vector->typeSize);
-    if (clone_vector->data == NULL)
+    clone_vector.data = malloc(vector->capacity * vector->typeSize);
+    if (clone_vector.data == NULL)
     {
         printf("\x1B[31m"
                "Failed to allocate memory for vector data.\n"
                "\x1B[0m");
-        free(clone_vector);
         exit(EXIT_FAILURE);
     }
 
-    memcpy(clone_vector->data, vector->data, vector->size * vector->typeSize);
+    memcpy(clone_vector.data, vector->data, vector->size * vector->typeSize);
     return clone_vector;
 }
 
-void t_vector_destroy(T_Vector **vectorPtr)
+void t_vector_destroy(T_Vector *vector)
 {
-    assert(vectorPtr != NULL && *vectorPtr != NULL);
-
-    T_Vector *vector = *vectorPtr;
+    assert(vector != NULL);
+    assert(vector->data != NULL);
 
     free(vector->data);
     vector->data = NULL;
-
-    free(vector);
-    *vectorPtr = NULL;
+    vector->capacity = 0;
+    vector->size = 0;
+    vector->growCond = 0;
+    vector->growRate = 0;
+    vector->shrinkCond = 0;
+    vector->shrinkRate = 0;
 }
 
 size_t t_vector_get_size(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
     return vector->size;
 }
 size_t t_vector_get_capacity(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
     return vector->capacity;
 }
 size_t t_vector_get_typeSize(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
     return vector->typeSize;
 }
 size_t t_vector_get_growCond(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
     return vector->growCond;
 }
 size_t t_vector_get_growRate(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
     return vector->growRate;
 }
 size_t t_vector_get_shrinkCond(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
     return vector->shrinkCond;
 }
 size_t t_vector_get_shrinkRate(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
     return vector->shrinkRate;
 }
 
 int t_vector_push_back(T_Vector *vector, void *element)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     size_t offset = _t_vector_offset(vector, t_vector_iter_end(vector));
     if (offset == SIZE_MAX)
@@ -211,6 +195,7 @@ int t_vector_push_front(T_Vector *vector, void *element)
 int t_vector_insert(T_Vector *vector, void *element, T_Iterator iterator)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     size_t offset = _t_vector_offset(vector, iterator);
     if (offset == SIZE_MAX)
@@ -238,6 +223,7 @@ int t_vector_insert(T_Vector *vector, void *element, T_Iterator iterator)
 int t_vector_pop_back(T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     if (vector->size == 0)
     {
@@ -255,6 +241,7 @@ int t_vector_pop_front(T_Vector *vector)
 int t_vector_erase(T_Vector *vector, T_Iterator iterator)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     if (vector->size == 0)
     {
@@ -271,6 +258,7 @@ int t_vector_erase(T_Vector *vector, T_Iterator iterator)
 int t_vector_resize(T_Vector *vector, size_t size)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
     if (vector == NULL)
     {
         printf("\x1B[31m"
@@ -304,6 +292,7 @@ int t_vector_clear(T_Vector *vector)
 T_Iterator t_vector_iter_begin(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     T_Iterator iter;
     iter.pointer = vector->data;
@@ -313,6 +302,7 @@ T_Iterator t_vector_iter_begin(const T_Vector *vector)
 T_Iterator t_vector_iter_end(const T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     T_Iterator iter;
     iter.pointer = vector->data + (vector->size * vector->typeSize);
@@ -323,6 +313,7 @@ T_Iterator t_vector_iter_end(const T_Vector *vector)
 T_Iterator t_vector_iter_at(const T_Vector *vector, size_t index)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     if (index >= vector->size)
     {
@@ -375,6 +366,7 @@ int _t_vector_growable(const T_Vector *vector)
 int _t_vector_expand(T_Vector *vector)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     void *new_location = realloc(vector->data, (vector->capacity * vector->growRate * vector->typeSize) / 100);
     if (new_location == NULL)
@@ -393,6 +385,7 @@ int _t_vector_expand(T_Vector *vector)
 int _t_vector_move_right(T_Vector *vector, T_Iterator iterator)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     size_t offset = _t_vector_offset(vector, iterator);
     if (offset == SIZE_MAX)
@@ -406,6 +399,7 @@ int _t_vector_move_right(T_Vector *vector, T_Iterator iterator)
 int _t_vector_move_left(T_Vector *vector, T_Iterator iterator)
 {
     assert(vector != NULL);
+    assert(vector->data != NULL);
 
     size_t offset = _t_vector_offset(vector, iterator);
     if (offset == SIZE_MAX)

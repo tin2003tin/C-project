@@ -35,14 +35,14 @@ int main()
     Book book2 = book_create("Waterfall", "Job", 100, false);
     Book book3 = book_create("Gramble Guide", "Mark", 500, true);
 
-    T_Vector *vector = T_VECTOR_NEW(Book);
-    t_vector_push_back(vector, &book1);
-    t_vector_push_back(vector, &book2);
-    t_vector_push_back(vector, &book3);
+    T_Vector vector = T_VECTOR_NEW(Book);
+    t_vector_push_back(&vector, &book1);
+    t_vector_push_back(&vector, &book2);
+    t_vector_push_back(&vector, &book3);
 
-    for (int index = 0; index < t_vector_get_size(vector); index++)
+    for (int index = 0; index < t_vector_get_size(&vector); index++)
     {
-        book_display(&(T_VECTOR_GET_VALUE_AS(Book, vector, index)));
+        book_display(&(T_VECTOR_GET_VALUE_AS(Book, &vector, index)));
         printf("\n");
     }
 
