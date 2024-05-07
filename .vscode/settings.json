@@ -17,6 +17,7 @@
     "vector": "c",
     "initializer_list": "c",
     "iterator": "c",
-    "typeinfo": "c"
+    "typeinfo": "c",
+    "system_error": "c"
   }
 }

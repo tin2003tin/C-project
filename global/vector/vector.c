@@ -289,6 +289,16 @@ int t_vector_clear(T_Vector *vector)
     return t_vector_resize(vector, 0);
 }
 
+void t_vector_display(const T_Vector *vector, const void (*displayFunc)(const void *))
+{
+    assert(vector != NULL);
+    assert(vector->data != NULL);
+    T_VECTOR_FOR_EACH(iter, vector)
+    {
+        displayFunc(iter.pointer);
+    }
+}
+
 T_Iterator t_vector_iter_begin(const T_Vector *vector)
 {
     assert(vector != NULL);

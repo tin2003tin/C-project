@@ -21,8 +21,9 @@ Book book_create(char *name, char *author, int price, bool isPublished)
     return book;
 }
 
-void book_display(const Book *book)
+const void book_display(const void *element)
 {
+    Book *book = (Book *)element;
     printf("--%s--\n", book->name);
     printf("Author: %s\n", book->author);
     printf("Price: %d\n", book->price);
@@ -39,12 +40,13 @@ int main()
     t_vector_push_back(&vector, &book1);
     t_vector_push_back(&vector, &book2);
     t_vector_push_back(&vector, &book3);
+    t_vector_display(&vector, book_display);
 
-    for (int index = 0; index < t_vector_get_size(&vector); index++)
-    {
-        book_display(&(T_VECTOR_GET_VALUE_AS(Book, &vector, index)));
-        printf("\n");
-    }
+    // for (int index = 0; index < t_vector_get_size(&vector); index++)
+    // {
+    //     book_display(&(T_VECTOR_GET_VALUE_AS(Book, &vector, index)));
+    //     printf("\n");
+    // }
 
     t_vector_destroy(&vector);
     return 0;

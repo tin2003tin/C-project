@@ -59,8 +59,12 @@ T_Iterator t_vector_iter_at(const T_Vector *vector, size_t index);
 void t_vector_iter_next(T_Iterator *iterator);
 void t_vector_iter_previous(T_Iterator *iterator);
 
+// Display
+void t_vector_display(const T_Vector *vector,const void (*displayFunc)(const void *));
+
 // Private functions
-size_t _t_vector_offset(const T_Vector *vector, T_Iterator iterator);
+size_t
+_t_vector_offset(const T_Vector *vector, T_Iterator iterator);
 int _t_vector_growable(const T_Vector *vector);
 int _t_vector_expand(T_Vector *vector);
 int _t_vector_move_right(T_Vector *vector, T_Iterator iterator);
