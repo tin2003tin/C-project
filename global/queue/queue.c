@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
 
 #define T_QUEUE_DEFAULT_SIZE 0
 #define T_QUEUE_DEFAULT_CAPACITY 1
@@ -13,7 +14,7 @@
 #define T_QUEUE_SHRINK_RATE 50
 
 #define T_QUEUE_ERROR 1
-#define T_QUEUE_SUCCUESS 0
+#define T_QUEUE_SUCCESS 0
 
 T_Queue t_queue_init(size_t typeSize)
 {
@@ -75,6 +76,8 @@ T_Queue t_queue_custom_init(size_t typeSize, size_t capacity, size_t growCond, s
     queue.growRate = growRate;
     queue.shrinkCond = shrinkCond;
     queue.shrinkRate = shrinkRate;
+    queue.first = queue.data;
+    queue.roar = queue.data;
 
     return queue;
 }
@@ -130,33 +133,170 @@ size_t t_queue_get_shrinkRate(const T_Queue *queue)
 int t_queue_enqueue(T_Queue *queue, void *element)
 {
     assert(queue != NULL);
-    if (queue == NULL)
+    assert(queue->data != NULL);
+    assert(element != NULL);
+
+    if (_t_queue_growable(queue))
     {
-        printf("\x1B[31m"
-               "Vector is null\n"
-               "\x1B[0m");
-        return T_QUEUE_ERROR;
+        if (_t_queue_expand(queue) == T_QUEUE_ERROR)
+        {
+            printf("\x1B[31mFailed to expand the queue.\n\x1B[0m");
+            return T_QUEUE_ERROR;
+        }
     }
+
+    if (queue->size > 0)
+    {
+        queue->roar += queue->typeSize;
+    }
+
+    memcpy(queue->roar, element, queue->typeSize);
+
+    queue->size++;
+
+    return T_QUEUE_SUCCESS;
 }
 
-int _t_queue_growable(const T_Queue *queue)
+int t_queue_dequeue(T_Queue *queue)
 {
-    if (queue->size > queue->capacity * (queue->growCond) / 100)
+    assert(queue != NULL);
+    assert(queue->data != NULL);
+
+    if (queue->size == 0)
     {
-        return 0;
+        printf("\x1B[31mQueue is empty. Cannot dequeue.\n\x1B[0m");
+        return T_QUEUE_ERROR;
     }
-    return 1;
+
+    queue->first += queue->typeSize;
+    queue->size--;
+
+    if (_t_queue_should_shrink(queue))
+    {
+        if (_t_queue_shrink(queue) == T_QUEUE_ERROR)
+        {
+            return T_QUEUE_ERROR;
+        }
+    }
+
+    return T_QUEUE_SUCCESS;
+}
+
+void *t_queue_front(const T_Queue *queue)
+{
+    assert(queue != NULL);
+    assert(queue->data != NULL);
+    if (t_queue_isEmpty(queue))
+    {
+        printf("\x1B[31mQueue is empty.\n\x1B[0m");
+        return NULL;
+    }
+    return queue->first;
+}
+
+void *t_queue_roar(const T_Queue *queue)
+{
+    assert(queue != NULL);
+    assert(queue->data != NULL);
+    if (t_queue_isEmpty(queue))
+    {
+        printf("\x1B[31mQueue is empty.\n\x1B[0m");
+        return NULL;
+    }
+    return queue->roar;
+}
+
+bool t_queue_isEmpty(const T_Queue *queue)
+{
+    assert(queue != NULL);
+    assert(queue->data != NULL);
+    return queue->size == 0;
+}
+
+bool _t_queue_growable(const T_Queue *queue)
+{
+
+    if (queue->roar > queue->data + (queue->capacity * queue->typeSize))
+    {
+        return true;
+    }
+    if (queue->size >= queue->capacity * (queue->growCond) / 100)
+    {
+        return true;
+    }
+    return false;
 }
 
 int _t_queue_expand(T_Queue *queue)
 {
     assert(queue != NULL);
-    if (queue == NULL)
+    assert(queue->data != NULL);
+
+    size_t newCapacity = (queue->capacity * queue->growRate) / 100;
+
+    if (newCapacity == 0 || queue->typeSize == 0)
     {
-        printf("\x1B[31m"
-               "Vector is null\n"
-               "\x1B[0m");
+        printf("\x1B[31mInvalid newCapacity or queue->typeSize.\n\x1B[0m");
         return T_QUEUE_ERROR;
     }
-    void *new_location = realloc(queue->data, queue->capacity * T_QUEUE_DEFAULT_CAPACITY);
+
+    size_t newSize = newCapacity * queue->typeSize;
+
+    void *newLocation = malloc(newSize);
+
+    if (newLocation == NULL)
+    {
+        printf("\x1B[31mFailed to allocate memory for expand.\n\x1B[0m");
+        return T_QUEUE_ERROR;
+    }
+    memcpy(newLocation, queue->first, queue->size * queue->typeSize);
+    free(queue->data);
+
+    queue->data = newLocation;
+    queue->capacity = newCapacity;
+    queue->first = newLocation;
+    queue->roar = newLocation + queue->size * queue->typeSize;
+
+    return T_QUEUE_SUCCESS;
+}
+
+bool _t_queue_should_shrink(const T_Queue *queue)
+{
+    assert(queue != NULL);
+    assert(queue->data != NULL);
+    assert(queue->capacity != 0);
+    if (queue->size < (queue->capacity * queue->shrinkCond) / 100)
+    {
+        return true;
+    }
+    return false;
+}
+
+int _t_queue_shrink(T_Queue *queue)
+{
+    assert(queue != NULL);
+    assert(queue->data != NULL);
+
+    size_t newCapacity = (queue->capacity * queue->shrinkRate) / 100;
+    if (newCapacity < T_QUEUE_DEFAULT_CAPACITY)
+    {
+        newCapacity = T_QUEUE_DEFAULT_CAPACITY;
+    }
+
+    void *newLocation = malloc(newCapacity * queue->typeSize);
+    if (newLocation == NULL)
+    {
+        printf("\x1B[31mFailed to reallocate memory for shrink.\n\x1B[0m");
+        return T_QUEUE_ERROR;
+    }
+
+    memcpy(newLocation, queue->first, (queue->size + 1) * queue->typeSize);
+    free(queue->data);
+
+    queue->data = newLocation;
+    queue->capacity = newCapacity;
+    queue->first = newLocation;
+    queue->roar = newLocation + (queue->size) * queue->typeSize;
+
+    return T_QUEUE_SUCCESS;
 }

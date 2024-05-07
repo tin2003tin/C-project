@@ -2,6 +2,7 @@
 #define TIN_QUEUE_H
 
 #include <stddef.h>
+#include <stdbool.h>
 
 typedef struct T_Queue
 {
@@ -34,11 +35,24 @@ size_t t_queue_get_typeSize(const T_Queue *queue);
 size_t t_queue_get_growRate(const T_Queue *queue);
 size_t t_queue_get_shrinkCond(const T_Queue *queue);
 size_t t_queue_get_shrinkRate(const T_Queue *queue);
+bool t_queue_isEmpty(const T_Queue *queue);
 
 // Insert,Remove
 int t_queue_enqueue(T_Queue *queue, void *element);
+int t_queue_dequeue(T_Queue *queue);
+
+// Getter
+void *t_queue_front(const T_Queue *queue);
+void *t_queue_roar(const T_Queue *queue);
+
+// Private
+bool _t_queue_growable(const T_Queue *queue);
+int _t_queue_expand(T_Queue *queue);
+bool _t_queue_should_shrink(const T_Queue *queue);
+int _t_queue_shrink(T_Queue *T_queue);
 
 // utilities
 #define T_QUEUE_NEW(type) t_queue_init(sizeof(type))
-#define T_QUEUE_SIZE(queue) t_queue_get_size(queue)
+#define T_QUEUE_FRONT_AS(type, queue) *(type *)t_queue_front(queue)
+#define T_QUEUE_ROAR_AS(type, queue) *(type *)t_queue_roar(queue)
 #endif
