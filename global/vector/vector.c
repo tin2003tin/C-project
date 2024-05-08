@@ -289,7 +289,7 @@ int t_vector_clear(T_Vector *vector)
     return t_vector_resize(vector, 0);
 }
 
-void t_vector_display(const T_Vector *vector, T_displayFunc displayFunc)
+void t_vector_display(const T_Vector *vector, T_DisplayFunc displayFunc)
 {
     assert(vector != NULL);
     assert(vector->data != NULL);

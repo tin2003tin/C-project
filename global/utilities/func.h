@@ -2,7 +2,7 @@
 #define TIN_UTILITIES
 #include <stdbool.h>
 
-typedef const void (*T_displayFunc)(const void *);
+typedef const void (*T_DisplayFunc)(const void *);
 typedef bool (*T_CompareFunc)(const void *, const void *);
 typedef bool (*T_EqualFunc)(const void *, const void *);
 

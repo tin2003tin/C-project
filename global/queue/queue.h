@@ -46,7 +46,7 @@ int t_queue_dequeue(T_Queue *queue);
 void *t_queue_front(const T_Queue *queue);
 void *t_queue_roar(const T_Queue *queue);
 
-void t_queue_display(const T_Queue *pqueue, T_displayFunc displayFunc);
+void t_queue_display(const T_Queue *pqueue, T_DisplayFunc displayFunc);
 
 // Private
 bool _t_queue_growable(const T_Queue *queue);

@@ -20,7 +20,7 @@ T_PQueue t_Pqueue_init(size_t typeSize, T_CompareFunc compareFunc)
 T_PQueue t_Pqueue_clone(const T_PQueue *pqueue)
 {
     assert(pqueue != NULL);
-    
+
     T_PQueue clone_pqueue;
     clone_pqueue.compareFunc = pqueue->compareFunc;
     clone_pqueue.queue = t_queue_clone(&pqueue->queue);
@@ -190,7 +190,7 @@ void _t_Pqueue_fixDown(T_PQueue *pqueue)
     free(temp);
 }
 
-void t_Pqueue_display(const T_PQueue *pqueue, T_displayFunc displayFunc)
+void t_Pqueue_display(const T_PQueue *pqueue, T_DisplayFunc displayFunc)
 {
     for (size_t i = 0; i < pqueue->queue.size; i++)
     {

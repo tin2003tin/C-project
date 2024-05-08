@@ -30,7 +30,7 @@ int t_Pqueue_enqueue(T_PQueue *pqueue, void *element);
 int t_Pqueue_dequeue(T_PQueue *pqueue);
 
 // Display
-void t_Pqueue_display(const T_PQueue *pqueue, T_displayFunc displayFunc);
+void t_Pqueue_display(const T_PQueue *pqueue, T_DisplayFunc displayFunc);
 
 // Private
 void _t_Pqueue_fixUp(T_PQueue *pqueue);

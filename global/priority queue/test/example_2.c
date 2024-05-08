@@ -43,17 +43,22 @@ const void book_display(const void *element)
 
 bool book_compare(const void *book1, const void *book2)
 {
+    if ((*(Book *)book1).price == (*(Book *)book2).price)
+    {
+        return (*(Book *)book1).id > (*(Book *)book2).id;
+    }
     return (*(Book *)book1).price > (*(Book *)book2).price;
 }
 int main()
 {
     Book book1 = book_create(1, "Fairy Tail", "Tin", 200, true);
     Book book2 = book_create(2, "Waterfall", "Job", 300, false);
-    Book book3 = book_create(3, "Gramble Guide", "Mark", 500, true);
-    Book book4 = book_create(4, "Gaming Gear", "Nut", 1000, false);
-    Book book5 = book_create(5, "Coconut", "Monkey", 299, true);
-    Book book6 = book_create(6, "Cheapest", "Me", 50, true);
-    Book book7 = book_create(7, "Expensive", "Who", 50000, true);
+    Book book3 = book_create(3, "Lavafull", "Job", 300, false);
+    Book book4 = book_create(4, "Gramble Guide", "Mark", 500, true);
+    Book book5 = book_create(5, "Gaming Gear", "Nut", 1000, false);
+    Book book6 = book_create(6, "Coconut", "Monkey", 299, true);
+    Book book7 = book_create(7, "Cheapest", "Me", 50, true);
+    Book book8 = book_create(8, "Expensive", "Who", 50000, true);
 
     T_PQueue pqueue = t_Pqueue_init(sizeof(Book), book_compare);
 
@@ -62,6 +67,7 @@ int main()
     t_Pqueue_enqueue(&pqueue, &book3);
     t_Pqueue_enqueue(&pqueue, &book4);
     t_Pqueue_enqueue(&pqueue, &book5);
+    t_Pqueue_enqueue(&pqueue, &book6);
 
     t_Pqueue_display(&pqueue, book_display);
     printf("============= Front\n");
@@ -81,7 +87,7 @@ int main()
     t_Pqueue_dequeue(&pqueue);
     t_Pqueue_dequeue(&pqueue);
     t_Pqueue_dequeue(&pqueue);
-    // t_Pqueue_dequeue(&pqueue);
+    t_Pqueue_dequeue(&pqueue);
 
     printf("size: %d\n", t_Pqueue_get_size(&pqueue));
     printf("cap: %d\n", t_Pqueue_get_capacity(&pqueue));

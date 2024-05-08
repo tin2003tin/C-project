@@ -60,7 +60,7 @@ void t_vector_iter_next(T_Iterator *iterator);
 void t_vector_iter_previous(T_Iterator *iterator);
 
 // Display
-void t_vector_display(const T_Vector *vector, T_displayFunc displayFunc);
+void t_vector_display(const T_Vector *vector, T_DisplayFunc displayFunc);
 
 // Private functions
 size_t

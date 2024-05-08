@@ -231,7 +231,7 @@ bool t_queue_isEmpty(const T_Queue *queue)
     return queue->size == 0;
 }
 
-void t_queue_display(const T_Queue *queue, T_displayFunc displayFunc)
+void t_queue_display(const T_Queue *queue, T_DisplayFunc displayFunc)
 {
     for (size_t i = 0; i < queue->size; i++)
     {
