@@ -2,7 +2,7 @@
 #define TIN_VECTOR
 
 #include <stddef.h>
-
+#include "../utilities/func.h"
 // Vector Type
 typedef struct T_Vector
 {
@@ -60,7 +60,7 @@ void t_vector_iter_next(T_Iterator *iterator);
 void t_vector_iter_previous(T_Iterator *iterator);
 
 // Display
-void t_vector_display(const T_Vector *vector,const void (*displayFunc)(const void *));
+void t_vector_display(const T_Vector *vector, T_displayFunc displayFunc);
 
 // Private functions
 size_t

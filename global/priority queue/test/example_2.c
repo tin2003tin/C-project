@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
-#include "global/priority queue/pqueue.h"
+#include "../pqueue.h"
 
 typedef struct Book
 {

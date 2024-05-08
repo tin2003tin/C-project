@@ -77,9 +77,33 @@ T_Queue t_queue_custom_init(size_t typeSize, size_t capacity, size_t growCond, s
     queue.shrinkCond = shrinkCond;
     queue.shrinkRate = shrinkRate;
     queue.first = queue.data;
-    queue.roar = queue.data;
 
     return queue;
+}
+
+T_Queue t_queue_clone(const T_Queue *queue)
+{
+    assert(queue != NULL);
+
+    T_Queue clone_queue;
+    clone_queue.data = malloc(queue->capacity * queue->typeSize);
+    if (clone_queue.data == NULL)
+    {
+        printf("\x1B[31m"
+               "Failed to allocate memory for queue data.\n"
+               "\x1B[0m");
+        exit(EXIT_FAILURE);
+    }
+    memcpy(clone_queue.data, queue->data, queue->capacity * queue->typeSize);
+    clone_queue.capacity = queue->capacity;
+    clone_queue.first = clone_queue.data;
+    clone_queue.size = queue->size;
+    clone_queue.typeSize = queue->typeSize;
+    clone_queue.growCond = queue->growCond;
+    clone_queue.growRate = queue->growRate;
+    clone_queue.shrinkCond = queue->shrinkCond;
+    clone_queue.shrinkRate = queue->shrinkRate;
+    return clone_queue;
 }
 
 void t_queue_destroy(T_Queue *queue)
@@ -90,7 +114,6 @@ void t_queue_destroy(T_Queue *queue)
         queue->data = NULL;
         queue->capacity = 0;
         queue->first = NULL;
-        queue->roar = NULL;
         queue->growCond = 0;
         queue->growRate = 0;
         queue->shrinkCond = 0;
@@ -145,12 +168,7 @@ int t_queue_enqueue(T_Queue *queue, void *element)
         }
     }
 
-    if (queue->size > 0)
-    {
-        queue->roar += queue->typeSize;
-    }
-
-    memcpy(queue->roar, element, queue->typeSize);
+    memcpy(queue->first + queue->size * queue->typeSize, element, queue->typeSize);
 
     queue->size++;
 
@@ -203,7 +221,7 @@ void *t_queue_roar(const T_Queue *queue)
         printf("\x1B[31mQueue is empty.\n\x1B[0m");
         return NULL;
     }
-    return queue->roar;
+    return queue->first + (queue->size - 1) * queue->typeSize;
 }
 
 bool t_queue_isEmpty(const T_Queue *queue)
@@ -213,14 +231,21 @@ bool t_queue_isEmpty(const T_Queue *queue)
     return queue->size == 0;
 }
 
+void t_queue_display(const T_Queue *queue, T_displayFunc displayFunc)
+{
+    for (size_t i = 0; i < queue->size; i++)
+    {
+        displayFunc(queue->first + i * queue->typeSize);
+    }
+}
+
 bool _t_queue_growable(const T_Queue *queue)
 {
-
-    if (queue->roar > queue->data + (queue->capacity * queue->typeSize))
-    {
-        return true;
-    }
-    if (queue->size >= queue->capacity * (queue->growCond) / 100)
+    // printf("data %d\n", queue->data);
+    // printf("first %d\n", queue->first);
+    // printf("next %d\n", queue->first + queue->size * queue->typeSize);
+    // printf("cap %d\n", queue->data + (queue->capacity * (queue->growCond) / 100) * queue->typeSize);
+    if (queue->first + queue->size * queue->typeSize >= queue->data + (queue->capacity * (queue->growCond) / 100) * queue->typeSize)
     {
         return true;
     }
@@ -255,7 +280,6 @@ int _t_queue_expand(T_Queue *queue)
     queue->data = newLocation;
     queue->capacity = newCapacity;
     queue->first = newLocation;
-    queue->roar = newLocation + queue->size * queue->typeSize;
 
     return T_QUEUE_SUCCESS;
 }
@@ -296,7 +320,6 @@ int _t_queue_shrink(T_Queue *queue)
     queue->data = newLocation;
     queue->capacity = newCapacity;
     queue->first = newLocation;
-    queue->roar = newLocation + (queue->size) * queue->typeSize;
 
     return T_QUEUE_SUCCESS;
 }

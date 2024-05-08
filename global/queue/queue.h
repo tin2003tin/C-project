@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include "../utilities/func.h"
 
 typedef struct T_Queue
 {
@@ -10,7 +11,6 @@ typedef struct T_Queue
     size_t typeSize;
 
     void *first;
-    void *roar;
 
     size_t capacity;
     size_t size;
@@ -25,6 +25,7 @@ typedef struct T_Queue
 // Contructor
 T_Queue t_queue_init(size_t typeSize);
 T_Queue t_queue_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate);
+T_Queue t_queue_clone(const T_Queue *queue);
 // Destructor
 void t_queue_destroy(T_Queue *queue);
 
@@ -44,6 +45,8 @@ int t_queue_dequeue(T_Queue *queue);
 // Getter
 void *t_queue_front(const T_Queue *queue);
 void *t_queue_roar(const T_Queue *queue);
+
+void t_queue_display(const T_Queue *pqueue, T_displayFunc displayFunc);
 
 // Private
 bool _t_queue_growable(const T_Queue *queue);

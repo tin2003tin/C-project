@@ -55,8 +55,22 @@ if errorlevel 1 (
   exit /b 1
 )
 
-rem Combine vector.o and stack.o into global.o
-ld.exe -r "%BIN_PATH%\out\vector.o" "%BIN_PATH%\out\stack.o" "%BIN_PATH%\out\SL_list.o" "%BIN_PATH%\out\DL_list.o" "%BIN_PATH%\out\CSL_list.o" "%BIN_PATH%\out\queue.o" -o "%BIN_PATH%\out\global.o"
+rem Compile queue.c into Pqueue.o
+gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\priority queue\Pqueue.c" -o "%BIN_PATH%\out\Pqueue.o"
+if errorlevel 1 (
+  echo %RED%== Error: Compilation of queue.c failed%NO_COLOR%
+  exit /b 1
+)
+
+rem Compile queue.c into utilities.o
+gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\utilities\func.c" -o "%BIN_PATH%\out\utilities_func.o"
+if errorlevel 1 (
+  echo %RED%== Error: Compilation of queue.c failed%NO_COLOR%
+  exit /b 1
+)
+
+rem Combine All
+ld.exe -r "%BIN_PATH%\out\vector.o" "%BIN_PATH%\out\stack.o" "%BIN_PATH%\out\SL_list.o" "%BIN_PATH%\out\DL_list.o" "%BIN_PATH%\out\CSL_list.o" "%BIN_PATH%\out\queue.o" "%BIN_PATH%\out\utilities_func.o" "%BIN_PATH%\out\Pqueue.o" -o "%BIN_PATH%\out\global.o" 
 if errorlevel 1 (
   echo %RED%== Error: Linking failed%NO_COLOR%
   exit /b 1
