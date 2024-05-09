@@ -18,6 +18,24 @@
     "initializer_list": "c",
     "iterator": "c",
     "typeinfo": "c",
-    "system_error": "c"
+    "system_error": "c",
+    "cstdarg": "c",
+    "cerrno": "c",
+    "atomic": "c",
+    "bit": "c",
+    "*.tcc": "c",
+    "cmath": "c",
+    "concepts": "c",
+    "memory_resource": "c",
+    "algorithm": "c",
+    "memory": "c",
+    "random": "c",
+    "iosfwd": "c",
+    "limits": "c",
+    "new": "c",
+    "numeric": "c",
+    "ostream": "c",
+    "stdexcept": "c",
+    "streambuf": "c"
   }
 }

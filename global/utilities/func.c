@@ -1,5 +1,6 @@
 #include "func.h"
 #include "stdio.h"
+#include "string.h"
 
 bool t_utilities_compareInt(const void *x1, const void *x2)
 {
@@ -15,5 +16,12 @@ const void t_utilities_display_int(const void *element)
     printf("%d ", *(int *)element);
 }
 
-// TODO compare/equal/display string
+bool t_utilities_compareString(const void *x1, const void *x2)
+{
+    return strcmp((char *)x1, (char *)x2);
+}
+bool t_utilities_equalString(const void *x1, const void *x2)
+{
+    return strcmp((const char *)x1, (const char *)x2) == 0;
+}
 // TODO compare/equal/display float
