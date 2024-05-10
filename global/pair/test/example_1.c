@@ -3,7 +3,7 @@
 
 T_Pair makePair()
 {
-    T_Pair pair3 = T_PAIR_NEW(int, int);
+    T_Pair pair3 = T_PAIR_NEW();
     int id = 999;
     int price = 999;
     pair3.first = &id;
@@ -13,14 +13,14 @@ T_Pair makePair()
 
 int main()
 {
-    T_Pair pair1 = T_PAIR_NEW(int, int);
+    T_Pair pair1 = T_PAIR_NEW();
     int id = 1;
     int price = 100;
-    T_pair_setFirst(&pair1, &id);
-    T_pair_setSecond(&pair1, &price);
+    T_pair_setFirst(&pair1, &id, sizeof(int));
+    T_pair_setSecond(&pair1, &price, sizeof(int));
     id = 2;
     price = 200;
-    T_Pair pair2 = T_pair_init_with(sizeof(int), sizeof(int), &id, &price);
+    T_Pair pair2 = T_pair_init_with(&id, sizeof(int), &price, sizeof(int));
     // T_pair_destroy(&pair1);
     if (pair1.first != NULL)
     {

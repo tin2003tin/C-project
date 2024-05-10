@@ -2,27 +2,22 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../queue/queue.h"
 
 #define T_ORDERMAP_ERROR 1
 #define T_ORDERMAP_SUCCESS 0
 
 // Private
 
-struct T_OrderMap_Node
-{
-    T_Pair data;
-    struct T_OrderMap_Node *parent;
-    struct T_OrderMap_Node *left;
-    struct T_OrderMap_Node *right;
-};
-
 struct T_OrderMap_Node *_t_ordermap_initNode(const T_OrderMap *map, void *key, void *value);
 struct T_OrderMap_Node *_t_ordermap_findEqualNode(const T_OrderMap *map, struct T_OrderMap_Node *node, void *key);
 struct T_OrderMap_Node *_t_ordermap_findParentNode(const T_OrderMap *map, struct T_OrderMap_Node *node, void *key);
 struct T_OrderMap_Node *_t_ordermap_findMaxNode(const T_OrderMap *map, struct T_OrderMap_Node *node);
 struct T_OrderMap_Node *_t_ordermap_findMinNode(const T_OrderMap *map, struct T_OrderMap_Node *node);
-const void _t_ordermap_displayTreeMaxToMin(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc);
-const void _t_ordermap_destroyTree(struct T_OrderMap_Node *node);
+const void _t_ordermap_displayNodeMaxToMin(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc);
+const void _t_ordermap_displayNodeBreadth(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc);
+const void _t_ordermap_destroyNode(struct T_OrderMap_Node *node);
+size_t _t_ordermap_get_height_Node(struct T_OrderMap_Node *node);
 
 T_OrderMap t_ordermap_init(size_t key_typeSize, size_t value_typeSize, T_CompareFunc compareFunc, T_EqualFunc equalFunc)
 {
@@ -44,7 +39,7 @@ T_OrderMap t_ordermap_init(size_t key_typeSize, size_t value_typeSize, T_Compare
 void t_ordermap_destroy(T_OrderMap *map)
 {
     assert(map != NULL);
-    _t_ordermap_destroyTree(map->head);
+    _t_ordermap_destroyNode(map->head);
     map->compareFunc = NULL;
     map->equalFunc = NULL;
     map->head = NULL;
@@ -129,7 +124,7 @@ int t_ordermap_edit(T_OrderMap *map, void *key, void *value)
                "\x1B[0m");
         return T_ORDERMAP_ERROR;
     }
-    if (T_pair_setSecond(&target->data, value) == 1)
+    if (T_pair_setSecond(&target->data, value, map->value_typeSize) == 1)
     {
         return T_ORDERMAP_ERROR;
     }
@@ -249,14 +244,30 @@ T_Pair *t_ordermap_max(const T_OrderMap *map)
 const void t_ordermap_display(const T_OrderMap *map, T_DisplayFunc displayFunc)
 {
     printf("{ ");
-    _t_ordermap_displayTreeMaxToMin(map->head, displayFunc);
+    _t_ordermap_displayNodeMaxToMin(map->head, displayFunc);
     printf("}\n");
+}
+
+const void t_ordermap_displayBreadth(const T_OrderMap *map, T_DisplayFunc displayFunc)
+{
+    printf("{ ");
+    _t_ordermap_displayNodeBreadth(map->head, displayFunc);
+    printf("}\n");
+}
+
+size_t t_ordermap_get_size(const T_OrderMap *map)
+{
+    assert(map != NULL);
+    return map->size;
+}
+size_t t_ordermap_get_height(const T_OrderMap *map)
+{
+    assert(map != NULL);
+    return _t_ordermap_get_height_Node(map->head);
 }
 
 struct T_OrderMap_Node *_t_ordermap_findMaxNode(const T_OrderMap *map, struct T_OrderMap_Node *node)
 {
-    assert(map != NULL);
-    assert(node != NULL);
     if (node->right == NULL)
     {
         return node;
@@ -265,8 +276,6 @@ struct T_OrderMap_Node *_t_ordermap_findMaxNode(const T_OrderMap *map, struct T_
 }
 struct T_OrderMap_Node *_t_ordermap_findMinNode(const T_OrderMap *map, struct T_OrderMap_Node *node)
 {
-    assert(map != NULL);
-    assert(node != NULL);
     if (node->left == NULL)
     {
         return node;
@@ -281,8 +290,8 @@ struct T_OrderMap_Node *_t_ordermap_initNode(const T_OrderMap *map, void *key, v
     {
         return NULL;
     }
-    assert(map != NULL);
-    node->data = T_pair_init_with(map->key_typeSize, map->value_typeSize, key, value);
+
+    node->data = T_pair_init_with(key, map->key_typeSize, value, map->value_typeSize);
     node->left = NULL;
     node->right = NULL;
     node->parent = NULL;
@@ -330,30 +339,68 @@ struct T_OrderMap_Node *_t_ordermap_findParentNode(const T_OrderMap *map, struct
     }
 }
 
-const void _t_ordermap_displayTreeMaxToMin(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc)
+const void _t_ordermap_displayNodeMaxToMin(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc)
 {
     if (node->left != NULL)
     {
-        _t_ordermap_displayTreeMaxToMin(node->left, displayFunc);
+        _t_ordermap_displayNodeMaxToMin(node->left, displayFunc);
     }
     t_pair_display(&node->data, displayFunc);
     printf(" ");
     if (node->right != NULL)
     {
-        _t_ordermap_displayTreeMaxToMin(node->right, displayFunc);
+        _t_ordermap_displayNodeMaxToMin(node->right, displayFunc);
     }
 }
 
-const void _t_ordermap_destroyTree(struct T_OrderMap_Node *node)
+const void _t_ordermap_displayNodeBreadth(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc)
+{
+    T_Queue queue = T_QUEUE_NEW(struct T_OrderMap_Node);
+    t_queue_enqueue(&queue, node);
+    struct T_OrderMap_Node *current;
+    while (!t_queue_isEmpty(&queue))
+    {
+        current = t_queue_front(&queue);
+        if (current != NULL)
+            t_pair_display(&current->data, displayFunc);
+        {
+            if (current->left != NULL)
+            {
+                t_queue_enqueue(&queue, current->left);
+            }
+            if (current->right != NULL)
+            {
+                t_queue_enqueue(&queue, current->right);
+            }
+
+            printf(" ");
+        }
+        t_queue_dequeue(&queue);
+    }
+    t_queue_destroy(&queue);
+}
+
+const void _t_ordermap_destroyNode(struct T_OrderMap_Node *node)
 {
     if (node->left != NULL)
     {
-        _t_ordermap_destroyTree(node->left);
+        _t_ordermap_destroyNode(node->left);
     }
     if (node->right != NULL)
     {
-        _t_ordermap_destroyTree(node->right);
+        _t_ordermap_destroyNode(node->right);
     }
     T_pair_destroy(&node->data);
     free(node);
+}
+
+size_t _t_ordermap_get_height_Node(struct T_OrderMap_Node *node)
+{
+    if (node == NULL)
+    {
+        return 0;
+    }
+    size_t left_height = _t_ordermap_get_height_Node(node->left);
+    size_t right_height = _t_ordermap_get_height_Node(node->right);
+    return 1 + left_height > right_height ? left_height : right_height;
 }
