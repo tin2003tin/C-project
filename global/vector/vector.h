@@ -17,6 +17,8 @@ typedef struct T_Vector
 
 	size_t shrinkCond;
 	size_t shrinkRate;
+
+	size_t (*getSize)(const struct T_Vector *vector);
 } T_Vector;
 // Vector_Iterator Type
 typedef struct T_Iterator
@@ -32,6 +34,7 @@ T_Vector t_vector_clone(const T_Vector *vector);
 void t_vector_destroy(T_Vector *vector);
 
 // Get Vector details
+
 size_t t_vector_get_size(const T_Vector *vector);
 size_t t_vector_get_capacity(const T_Vector *vector);
 size_t t_vector_get_typeSize(const T_Vector *vector);

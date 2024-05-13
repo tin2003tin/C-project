@@ -1,5 +1,4 @@
-#ifndef TIN_UTILITIES
-#define TIN_UTILITIES
+#ifndef TIN_UTILITIES_FUNC
 #include <stdbool.h>
 
 typedef const void (*T_DisplayFunc)(const void *);

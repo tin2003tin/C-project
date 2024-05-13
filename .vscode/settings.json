@@ -36,6 +36,7 @@
     "numeric": "c",
     "ostream": "c",
     "stdexcept": "c",
-    "streambuf": "c"
+    "streambuf": "c",
+    "cstdint": "c"
   }
 }

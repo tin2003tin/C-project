@@ -16,6 +16,11 @@
 #define T_VECTOR_ERROR 1
 #define T_VECTOR_SUCCESS 0
 
+size_t size(T_Vector *vector)
+{
+    return vector->size;
+}
+
 T_Vector t_vector_init(size_t typeSize)
 {
     return t_vector_custom_init(typeSize, T_VECTOR_DEFAULT_CAPACITY, T_VECTOR_GROW_COND, T_VECTOR_GROW_RATE, T_VECTOR_SHRINK_COND, T_VECTOR_SHRINK_RATE);
@@ -75,6 +80,7 @@ T_Vector t_vector_custom_init(size_t typeSize, size_t capacity, size_t growCond,
     vector.growRate = growRate;
     vector.shrinkCond = shrinkCond;
     vector.shrinkRate = shrinkRate;
+    vector.getSize = t_vector_get_size;
 
     return vector;
 }
