@@ -3,26 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define T_STACK_DEFAULT_SIZE 0
-#define T_STACK_DEFAULT_CAPACITY 1
-
-#define T_STACK_GROW_COND 100
-#define T_STACK_GROW_RATE 200
-
-#define T_STACK_SHRINK_COND 0
-#define T_STACK_SHRINK_RATE 0
 
 #define T_STACK_ERROR 1
 #define T_STACK_SUCCESS 0
 
 T_Stack t_stack_init(size_t typeSize)
 {
-    return t_stack_custom_init(typeSize, T_STACK_DEFAULT_CAPACITY, T_STACK_GROW_COND, T_STACK_GROW_RATE, T_STACK_SHRINK_COND, T_STACK_SHRINK_RATE);
-}
-T_Stack t_stack_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate)
-{
     T_Stack stack;
-    T_Vector vector = t_vector_custom_init(typeSize, capacity, growCond, growRate, shrinkCond, shrinkRate);
+    T_Vector vector = t_vector_init(typeSize);
     if (vector.data == NULL)
     {
         exit(EXIT_FAILURE);

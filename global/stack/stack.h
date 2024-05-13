@@ -14,7 +14,6 @@ typedef struct T_Stack
 
 // Constructor and Destructor
 T_Stack t_stack_init(size_t typeSize);
-T_Stack t_stack_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate);
 T_Stack t_stack_clone(const T_Stack *stack);
 void t_stack_destroy(T_Stack *stack);
 

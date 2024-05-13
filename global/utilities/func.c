@@ -16,6 +16,10 @@ const void t_utilities_display_int(const void *element)
     printf("%d ", *(int *)element);
 }
 
+const void t_utilities_display_String(const void *element) {
+    printf("%s ", *(char **)element);
+}
+
 bool t_utilities_compareString(const void *x1, const void *x2)
 {
     return strcmp((char *)x1, (char *)x2);

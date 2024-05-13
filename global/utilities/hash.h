@@ -1,9 +1,11 @@
 #ifndef TIN_UTILITIES_HASH
 
-unsigned int t_utilities_hash_int(unsigned int x);
+typedef unsigned long (*T_HashFunc)(const void *);
 
-unsigned long t_utilities_hash_string(unsigned char *str);
+unsigned long t_utilities_hash_int(const void *x);
 
-unsigned int t_utilities_hash_float(float x);
+unsigned long t_utilities_hash_string(const void *str);
+
+unsigned long t_utilities_hash_float(const void *x);
 
 #endif

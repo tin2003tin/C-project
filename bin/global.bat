@@ -69,6 +69,12 @@ if errorlevel 1 (
   exit /b 1
 )
 
+gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\utilities\hash.c" -o "%BIN_PATH%\out\utilities_hash.o"
+if errorlevel 1 (
+  echo %RED%== Error: Compilation of queue.c failed%NO_COLOR%
+  exit /b 1
+)
+
 gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\pair\pair.c" -o "%BIN_PATH%\out\pair.o"
 if errorlevel 1 (
   echo %RED%== Error: Compilation of queue.c failed%NO_COLOR%
@@ -87,8 +93,14 @@ if errorlevel 1 (
   exit /b 1
 )
 
+gcc.exe -c -Wno-implicit-function-declaration "%BIN_PATH%\..\global\hashMap\hashmap.c" -o "%BIN_PATH%\out\hashMap.o"
+if errorlevel 1 (
+  echo %RED%== Error: Compilation of queue.c failed%NO_COLOR%
+  exit /b 1
+)
+
 rem Combine All
-ld.exe -r "%BIN_PATH%\out\vector.o" "%BIN_PATH%\out\stack.o" "%BIN_PATH%\out\SL_list.o" "%BIN_PATH%\out\DL_list.o" "%BIN_PATH%\out\CSL_list.o" "%BIN_PATH%\out\queue.o" "%BIN_PATH%\out\utilities_func.o" "%BIN_PATH%\out\Pqueue.o" "%BIN_PATH%\out\pair.o" "%BIN_PATH%\out\orderMap.o"  "%BIN_PATH%\out\AVLorderMap.o" -o "%BIN_PATH%\out\global.o" 
+ld.exe -r "%BIN_PATH%\out\vector.o" "%BIN_PATH%\out\stack.o" "%BIN_PATH%\out\SL_list.o" "%BIN_PATH%\out\DL_list.o" "%BIN_PATH%\out\CSL_list.o" "%BIN_PATH%\out\queue.o" "%BIN_PATH%\out\utilities_func.o" "%BIN_PATH%\out\Pqueue.o" "%BIN_PATH%\out\pair.o" "%BIN_PATH%\out\orderMap.o"  "%BIN_PATH%\out\AVLorderMap.o" "%BIN_PATH%\out\utilities_hash.o" "%BIN_PATH%\out\hashMap.o" -o "%BIN_PATH%\out\global.o" 
 if errorlevel 1 (
   echo %RED%== Error: Linking failed%NO_COLOR%
   exit /b 1

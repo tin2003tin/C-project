@@ -10,62 +10,14 @@
 #define T_VECTOR_GROW_COND 100
 #define T_VECTOR_GROW_RATE 200
 
-#define T_VECTOR_SHRINK_COND 0
-#define T_VECTOR_SHRINK_RATE 0
-
 #define T_VECTOR_ERROR 1
 #define T_VECTOR_SUCCESS 0
 
-size_t size(T_Vector *vector)
-{
-    return vector->size;
-}
-
 T_Vector t_vector_init(size_t typeSize)
 {
-    return t_vector_custom_init(typeSize, T_VECTOR_DEFAULT_CAPACITY, T_VECTOR_GROW_COND, T_VECTOR_GROW_RATE, T_VECTOR_SHRINK_COND, T_VECTOR_SHRINK_RATE);
-}
-
-T_Vector t_vector_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate)
-{
-    if (capacity == 0)
-    {
-        printf("\x1B[31m"
-               "Capacity must be greater than 0.\n"
-               "\x1B[0m");
-        exit(EXIT_FAILURE);
-    }
-    if (growCond > 100)
-    {
-        printf("\x1B[31m"
-               "GrowCond must be lower than 100.\n"
-               "\x1B[0m");
-        exit(EXIT_FAILURE);
-    }
-    if (growRate < 100)
-    {
-        printf("\x1B[31m"
-               "GrowRate must be greater than 100.\n"
-               "\x1B[0m");
-        exit(EXIT_FAILURE);
-    }
-    if (shrinkCond > 100)
-    {
-        printf("\x1B[31m"
-               "ShrinkCond must be lower than 100.\n"
-               "\x1B[0m");
-        exit(EXIT_FAILURE);
-    }
-    if (shrinkRate > 100)
-    {
-        printf("\x1B[31m"
-               "ShrinkRate must be lower than 100.\n"
-               "\x1B[0m");
-        exit(EXIT_FAILURE);
-    }
     T_Vector vector;
 
-    vector.data = malloc(capacity * typeSize);
+    vector.data = malloc(T_VECTOR_DEFAULT_CAPACITY * typeSize);
     if (vector.data == NULL)
     {
         printf("\x1B[31m"
@@ -74,13 +26,8 @@ T_Vector t_vector_custom_init(size_t typeSize, size_t capacity, size_t growCond,
         exit(EXIT_FAILURE);
     }
     vector.typeSize = typeSize;
-    vector.capacity = capacity;
+    vector.capacity = T_VECTOR_DEFAULT_CAPACITY;
     vector.size = 0;
-    vector.growCond = growCond;
-    vector.growRate = growRate;
-    vector.shrinkCond = shrinkCond;
-    vector.shrinkRate = shrinkRate;
-    vector.getSize = t_vector_get_size;
 
     return vector;
 }
@@ -120,10 +67,6 @@ void t_vector_destroy(T_Vector *vector)
     vector->data = NULL;
     vector->capacity = 0;
     vector->size = 0;
-    vector->growCond = 0;
-    vector->growRate = 0;
-    vector->shrinkCond = 0;
-    vector->shrinkRate = 0;
 }
 
 size_t t_vector_get_size(const T_Vector *vector)
@@ -143,30 +86,6 @@ size_t t_vector_get_typeSize(const T_Vector *vector)
     assert(vector != NULL);
     assert(vector->data != NULL);
     return vector->typeSize;
-}
-size_t t_vector_get_growCond(const T_Vector *vector)
-{
-    assert(vector != NULL);
-    assert(vector->data != NULL);
-    return vector->growCond;
-}
-size_t t_vector_get_growRate(const T_Vector *vector)
-{
-    assert(vector != NULL);
-    assert(vector->data != NULL);
-    return vector->growRate;
-}
-size_t t_vector_get_shrinkCond(const T_Vector *vector)
-{
-    assert(vector != NULL);
-    assert(vector->data != NULL);
-    return vector->shrinkCond;
-}
-size_t t_vector_get_shrinkRate(const T_Vector *vector)
-{
-    assert(vector != NULL);
-    assert(vector->data != NULL);
-    return vector->shrinkRate;
 }
 
 int t_vector_push_back(T_Vector *vector, void *element)
@@ -308,7 +227,6 @@ void t_vector_display(const T_Vector *vector, T_DisplayFunc displayFunc)
 T_Iterator t_vector_iter_begin(const T_Vector *vector)
 {
     assert(vector != NULL);
-    assert(vector->data != NULL);
 
     T_Iterator iter;
     iter.pointer = vector->data;
@@ -318,7 +236,6 @@ T_Iterator t_vector_iter_begin(const T_Vector *vector)
 T_Iterator t_vector_iter_end(const T_Vector *vector)
 {
     assert(vector != NULL);
-    assert(vector->data != NULL);
 
     T_Iterator iter;
     iter.pointer = vector->data + (vector->size * vector->typeSize);
@@ -372,7 +289,7 @@ size_t _t_vector_offset(const T_Vector *vector, T_Iterator iterator)
 
 int _t_vector_growable(const T_Vector *vector)
 {
-    if (vector->size == vector->capacity * (vector->growCond) / 100)
+    if (vector->size == vector->capacity * (T_VECTOR_GROW_COND) / 100)
     {
         return 1;
     }
@@ -384,7 +301,7 @@ int _t_vector_expand(T_Vector *vector)
     assert(vector != NULL);
     assert(vector->data != NULL);
 
-    void *new_location = realloc(vector->data, (vector->capacity * vector->growRate * vector->typeSize) / 100);
+    void *new_location = realloc(vector->data, (vector->capacity * T_VECTOR_GROW_RATE * vector->typeSize) / 100);
     if (new_location == NULL)
     {
         printf("\x1B[31m"
@@ -393,7 +310,7 @@ int _t_vector_expand(T_Vector *vector)
         return T_VECTOR_ERROR;
     }
 
-    vector->capacity = (vector->capacity * vector->growRate) / 100;
+    vector->capacity = (vector->capacity * T_VECTOR_GROW_RATE) / 100;
     vector->data = new_location;
     return T_VECTOR_SUCCESS;
 }

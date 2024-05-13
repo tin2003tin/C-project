@@ -37,8 +37,8 @@ size_t t_AVL_ordermap_get_size(const T_AVL_OrderMap *map);
 size_t t_AVL_ordermap_get_height(const T_AVL_OrderMap *map);
 
 // Display
-const void t_AVL_ordermap_display(const T_AVL_OrderMap *map, T_DisplayFunc displayFunc);
-const void t_AVL_ordermap_displayBreadth(const T_AVL_OrderMap *map, T_DisplayFunc displayFunc);
+const void t_AVL_ordermap_display(const T_AVL_OrderMap *map, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2);
+const void t_AVL_ordermap_displayBreadth(const T_AVL_OrderMap *map, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2);
 
 #define T_AVL_ORDERMAP_NEW_INT_INT() t_AVL_ordermap_init(sizeof(int), sizeof(int), t_utilities_compareInt, t_utilities_equalInt)
 #define T_AVL_ORDERMAP_NEW_STRING_STRING() t_AVL_ordermap_init(sizeof(char *), sizeof(char *), t_utilities_compareString, t_utilities_equalString)

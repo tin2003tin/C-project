@@ -73,11 +73,11 @@ int T_pair_setSecond(T_Pair *pair, const void *element, size_t second_typeSize)
     return T_PAIR_SUCCESS;
 }
 
-const void t_pair_display(const T_Pair *pair, T_DisplayFunc displayFunc)
+const void t_pair_display(const T_Pair *pair, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     printf("{");
-    displayFunc(pair->first);
+    displayFunc1(pair->first);
     printf(":");
-    displayFunc(pair->second);
+    displayFunc2(pair->second);
     printf("}");
 }

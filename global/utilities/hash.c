@@ -1,27 +1,30 @@
 #include "hash.h"
+#include <string.h>
 
-unsigned int t_utilities_hash_int(unsigned int x)
+unsigned long t_utilities_hash_int(const void *x)
 {
-    x = ((x >> 16) ^ x) * 0x45d9f3b;
-    x = ((x >> 16) ^ x) * 0x45d9f3b;
-    x = (x >> 16) ^ x;
-    return x;
+    unsigned long y = *(unsigned long *)x;
+    y = ((y >> 16) ^ y) * 0x45d9f3b;
+    y = ((y >> 16) ^ y) * 0x45d9f3b;
+    y = (y >> 16) ^ y;
+    return y;
 }
 
-unsigned long t_utilities_hash_string(unsigned char *str)
+unsigned long t_utilities_hash_string(const void *str)
 {
     unsigned long hash = 5381;
+    const unsigned char *s = (const unsigned char *)str;
     int c;
 
-    while (c = *str++)
+    while ((c = *s++))
         hash = ((hash << 5) + hash) + c;
 
     return hash;
 }
 
-unsigned int t_utilities_hash_float(float x)
+unsigned long t_utilities_hash_float(const void *x)
 {
     unsigned int hash;
-    memcpy(&hash, &x, sizeof(unsigned int));
+    memcpy(&hash, x, sizeof(unsigned int));
     return hash;
 }

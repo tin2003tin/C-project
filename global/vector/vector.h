@@ -8,17 +8,8 @@ typedef struct T_Vector
 {
 	void *data;
 	size_t typeSize;
-
 	size_t capacity;
 	size_t size;
-
-	size_t growCond;
-	size_t growRate;
-
-	size_t shrinkCond;
-	size_t shrinkRate;
-
-	size_t (*getSize)(const struct T_Vector *vector);
 } T_Vector;
 // Vector_Iterator Type
 typedef struct T_Iterator
@@ -29,7 +20,6 @@ typedef struct T_Iterator
 
 // Constructor and Destructor
 T_Vector t_vector_init(size_t typeSize);
-T_Vector t_vector_custom_init(size_t typeSize, size_t capacity, size_t growCond, size_t growRate, size_t shrinkCond, size_t shrinkRate);
 T_Vector t_vector_clone(const T_Vector *vector);
 void t_vector_destroy(T_Vector *vector);
 

@@ -14,8 +14,8 @@ struct T_OrderMap_Node *_t_ordermap_findEqualNode(const T_OrderMap *map, struct 
 struct T_OrderMap_Node *_t_ordermap_findParentNode(const T_OrderMap *map, struct T_OrderMap_Node *node, void *key);
 struct T_OrderMap_Node *_t_ordermap_findMaxNode(const T_OrderMap *map, struct T_OrderMap_Node *node);
 struct T_OrderMap_Node *_t_ordermap_findMinNode(const T_OrderMap *map, struct T_OrderMap_Node *node);
-const void _t_ordermap_displayNodeMaxToMin(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc);
-const void _t_ordermap_displayNodeBreadth(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc);
+const void _t_ordermap_displayNodeMaxToMin(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2);
+const void _t_ordermap_displayNodeBreadth(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2);
 const void _t_ordermap_destroyNode(struct T_OrderMap_Node *node);
 size_t _t_ordermap_get_height_Node(struct T_OrderMap_Node *node);
 
@@ -241,17 +241,17 @@ T_Pair *t_ordermap_max(const T_OrderMap *map)
     }
     return &_t_ordermap_findMaxNode(map, map->head)->data;
 }
-const void t_ordermap_display(const T_OrderMap *map, T_DisplayFunc displayFunc)
+const void t_ordermap_display(const T_OrderMap *map, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     printf("{ ");
-    _t_ordermap_displayNodeMaxToMin(map->head, displayFunc);
+    _t_ordermap_displayNodeMaxToMin(map->head, displayFunc1, displayFunc2);
     printf("}\n");
 }
 
-const void t_ordermap_displayBreadth(const T_OrderMap *map, T_DisplayFunc displayFunc)
+const void t_ordermap_displayBreadth(const T_OrderMap *map, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     printf("{ ");
-    _t_ordermap_displayNodeBreadth(map->head, displayFunc);
+    _t_ordermap_displayNodeBreadth(map->head, displayFunc1, displayFunc2);
     printf("}\n");
 }
 
@@ -339,21 +339,21 @@ struct T_OrderMap_Node *_t_ordermap_findParentNode(const T_OrderMap *map, struct
     }
 }
 
-const void _t_ordermap_displayNodeMaxToMin(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc)
+const void _t_ordermap_displayNodeMaxToMin(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     if (node->left != NULL)
     {
-        _t_ordermap_displayNodeMaxToMin(node->left, displayFunc);
+        _t_ordermap_displayNodeMaxToMin(node->left, displayFunc1, displayFunc2);
     }
-    t_pair_display(&node->data, displayFunc);
+    t_pair_display(&node->data, displayFunc1, displayFunc2);
     printf(" ");
     if (node->right != NULL)
     {
-        _t_ordermap_displayNodeMaxToMin(node->right, displayFunc);
+        _t_ordermap_displayNodeMaxToMin(node->right, displayFunc1, displayFunc2);
     }
 }
 
-const void _t_ordermap_displayNodeBreadth(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc)
+const void _t_ordermap_displayNodeBreadth(struct T_OrderMap_Node *node, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     T_Queue queue = T_QUEUE_NEW(struct T_OrderMap_Node);
     t_queue_enqueue(&queue, node);
@@ -362,7 +362,7 @@ const void _t_ordermap_displayNodeBreadth(struct T_OrderMap_Node *node, T_Displa
     {
         current = t_queue_front(&queue);
         if (current != NULL)
-            t_pair_display(&current->data, displayFunc);
+            t_pair_display(&current->data, displayFunc1, displayFunc2);
         {
             if (current->left != NULL)
             {

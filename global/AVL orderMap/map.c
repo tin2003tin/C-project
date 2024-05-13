@@ -14,8 +14,8 @@ struct T_AVL_OrderMap_Node *_t_AVL_ordermap_findEqualNode(const T_AVL_OrderMap *
 struct T_AVL_OrderMap_Node *_t_AVL_ordermap_findParentNode(const T_AVL_OrderMap *map, struct T_AVL_OrderMap_Node *node, void *key);
 struct T_AVL_OrderMap_Node *_t_AVL_ordermap_findMaxNode(const T_AVL_OrderMap *map, struct T_AVL_OrderMap_Node *node);
 struct T_AVL_OrderMap_Node *_t_AVL_ordermap_findMinNode(const T_AVL_OrderMap *map, struct T_AVL_OrderMap_Node *node);
-const void _t_AVL_ordermap_displayNodeMaxToMin(struct T_AVL_OrderMap_Node *node, T_DisplayFunc displayFunc);
-const void _t_AVL_ordermap_displayNodeBreadth(struct T_AVL_OrderMap_Node *node, T_DisplayFunc displayFunc);
+const void _t_AVL_ordermap_displayNodeMaxToMin(struct T_AVL_OrderMap_Node *node, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2);
+const void _t_AVL_ordermap_displayNodeBreadth(struct T_AVL_OrderMap_Node *node, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2);
 const void _t_AVL_ordermap_destroyNode(struct T_AVL_OrderMap_Node *node);
 int _t_AVL_ordermap_get_height_Node(struct T_AVL_OrderMap_Node *node);
 void _t_AVL_ordermap_set_height_Node(struct T_AVL_OrderMap_Node *node);
@@ -282,16 +282,16 @@ T_Pair *t_AVL_ordermap_max(const T_AVL_OrderMap *map)
     }
     return &_t_AVL_ordermap_findMaxNode(map, map->head)->data;
 }
-const void t_AVL_ordermap_display(const T_AVL_OrderMap *map, T_DisplayFunc displayFunc)
+const void t_AVL_ordermap_display(const T_AVL_OrderMap *map, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     printf("{ ");
-    _t_AVL_ordermap_displayNodeMaxToMin(map->head, displayFunc);
+    _t_AVL_ordermap_displayNodeMaxToMin(map->head, displayFunc1, displayFunc2);
     printf("}\n");
 }
-const void t_AVL_ordermap_displayBreadth(const T_AVL_OrderMap *map, T_DisplayFunc displayFunc)
+const void t_AVL_ordermap_displayBreadth(const T_AVL_OrderMap *map, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     printf("{ ");
-    _t_AVL_ordermap_displayNodeBreadth(map->head, displayFunc);
+    _t_AVL_ordermap_displayNodeBreadth(map->head, displayFunc1, displayFunc2);
     printf("}\n");
 }
 size_t t_AVL_ordermap_get_size(const T_AVL_OrderMap *map)
@@ -379,21 +379,21 @@ struct T_AVL_OrderMap_Node *_t_AVL_ordermap_findParentNode(const T_AVL_OrderMap 
     }
 }
 
-const void _t_AVL_ordermap_displayNodeMaxToMin(struct T_AVL_OrderMap_Node *node, T_DisplayFunc displayFunc)
+const void _t_AVL_ordermap_displayNodeMaxToMin(struct T_AVL_OrderMap_Node *node, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     if (node->left != NULL)
     {
-        _t_AVL_ordermap_displayNodeMaxToMin(node->left, displayFunc);
+        _t_AVL_ordermap_displayNodeMaxToMin(node->left, displayFunc1, displayFunc2);
     }
-    t_pair_display(&node->data, displayFunc);
+    t_pair_display(&node->data, displayFunc1, displayFunc2);
     printf(" ");
     if (node->right != NULL)
     {
-        _t_AVL_ordermap_displayNodeMaxToMin(node->right, displayFunc);
+        _t_AVL_ordermap_displayNodeMaxToMin(node->right, displayFunc1, displayFunc2);
     }
 }
 
-const void _t_AVL_ordermap_displayNodeBreadth(struct T_AVL_OrderMap_Node *node, T_DisplayFunc displayFunc)
+const void _t_AVL_ordermap_displayNodeBreadth(struct T_AVL_OrderMap_Node *node, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     T_Queue queue = T_QUEUE_NEW(struct T_AVL_OrderMap_Node);
     t_queue_enqueue(&queue, node);
@@ -402,7 +402,7 @@ const void _t_AVL_ordermap_displayNodeBreadth(struct T_AVL_OrderMap_Node *node, 
     {
         current = t_queue_front(&queue);
         if (current != NULL)
-            t_pair_display(&current->data, displayFunc);
+            t_pair_display(&current->data, displayFunc1, displayFunc2);
         {
             if (current->left != NULL)
             {
