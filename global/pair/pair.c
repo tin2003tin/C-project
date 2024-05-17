@@ -46,19 +46,24 @@ void *T_pair_getSecond(const T_Pair *pair)
 int T_pair_setFirst(T_Pair *pair, const void *element, size_t first_typeSize)
 {
     assert(pair != NULL);
-    if (pair->first == NULL)
-    {
-    }
+
     void *new_first = malloc(first_typeSize);
     if (new_first == NULL)
     {
         return T_PAIR_ERROR;
     }
+
     memcpy(new_first, element, first_typeSize);
-    free(pair->first);
+
+    if (pair->first != NULL)
+    {
+        free(pair->first);
+    }
+
     pair->first = new_first;
     return T_PAIR_SUCCESS;
 }
+
 int T_pair_setSecond(T_Pair *pair, const void *element, size_t second_typeSize)
 {
     assert(pair != NULL);
@@ -68,12 +73,16 @@ int T_pair_setSecond(T_Pair *pair, const void *element, size_t second_typeSize)
         return T_PAIR_ERROR;
     }
     memcpy(new_second, element, second_typeSize);
-    free(pair->second);
+
+    if (pair->second != NULL)
+    {
+        free(pair->second);
+    }
     pair->second = new_second;
     return T_PAIR_SUCCESS;
 }
 
-const void t_pair_display(const T_Pair *pair, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
+void t_pair_display(const T_Pair *pair, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2)
 {
     printf("{");
     displayFunc1(pair->first);

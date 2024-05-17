@@ -21,7 +21,7 @@ int T_pair_setFirst(T_Pair *pair, const void *element, size_t first_typeSize);
 int T_pair_setSecond(T_Pair *pair, const void *element, size_t second_typeSize);
 
 // Display
-const void t_pair_display(const T_Pair *pair, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2);
+void t_pair_display(const T_Pair *pair, T_DisplayFunc displayFunc1, T_DisplayFunc displayFunc2);
 
 #define T_PAIR_NEW() T_pair_init()
 #define T_PAIR_NEW_WITH(first, first_type, second, second_type) T_pair_init_with(first ,sizeof(first_type) ,second ,sizeof(second_type))

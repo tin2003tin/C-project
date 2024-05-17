@@ -1,0 +1,16 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' 
+
+make
+
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}Compilation successful.${NC}"
+    ./bin/out/program
+else
+    echo -e "${RED}Compilation failed. Unable to run the program.${NC}"
+fi
+
+make clean

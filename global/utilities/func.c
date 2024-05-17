@@ -11,12 +11,12 @@ bool t_utilities_equalInt(const void *x1, const void *x2)
     return *(int *)x1 == *(int *)x2;
 }
 
-const void t_utilities_display_int(const void *element)
+void t_utilities_display_int(const void *element)
 {
     printf("%d ", *(int *)element);
 }
 
-const void t_utilities_display_String(const void *element) {
+void t_utilities_display_String(const void *element) {
     printf("%s ", *(char **)element);
 }
 

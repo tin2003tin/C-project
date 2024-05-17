@@ -16,7 +16,7 @@
 T_Vector t_vector_init(size_t typeSize)
 {
     T_Vector vector;
-
+    vector.data = NULL;
     vector.data = malloc(T_VECTOR_DEFAULT_CAPACITY * typeSize);
     if (vector.data == NULL)
     {
@@ -94,7 +94,7 @@ int t_vector_push_back(T_Vector *vector, void *element)
     assert(vector->data != NULL);
 
     size_t offset = _t_vector_offset(vector, t_vector_iter_end(vector));
-    if (offset == SIZE_MAX)
+    if (offset == 0)
     {
         return T_VECTOR_ERROR;
     }
@@ -107,7 +107,7 @@ int t_vector_push_back(T_Vector *vector, void *element)
         }
     }
 
-    memcpy(vector->data + offset, element, vector->typeSize);
+    memcpy((char *)vector->data + offset, element, vector->typeSize);
     vector->size++;
     return T_VECTOR_SUCCESS;
 }
@@ -123,7 +123,7 @@ int t_vector_insert(T_Vector *vector, void *element, T_Iterator iterator)
     assert(vector->data != NULL);
 
     size_t offset = _t_vector_offset(vector, iterator);
-    if (offset == SIZE_MAX)
+    if (offset == 0)
     {
         return T_VECTOR_ERROR;
     }
@@ -140,7 +140,7 @@ int t_vector_insert(T_Vector *vector, void *element, T_Iterator iterator)
         return T_VECTOR_ERROR;
     }
 
-    memcpy(vector->data + offset, element, vector->typeSize);
+    memcpy((char *)vector->data + offset, element, vector->typeSize);
     vector->size++;
     return T_VECTOR_SUCCESS;
 }
@@ -238,7 +238,7 @@ T_Iterator t_vector_iter_end(const T_Vector *vector)
     assert(vector != NULL);
 
     T_Iterator iter;
-    iter.pointer = vector->data + (vector->size * vector->typeSize);
+    iter.pointer = (char *)vector->data + (vector->size * vector->typeSize);
     iter.typeSize = vector->typeSize;
     return iter;
 }
@@ -251,7 +251,7 @@ T_Iterator t_vector_iter_at(const T_Vector *vector, size_t index)
     if (index >= vector->size)
     {
         printf("\x1B[31m"
-               "Index out of bounds. size: %d\n"
+               "Index out of bounds. size: %ld\n"
                "\x1B[0m",
                vector->size);
         T_Iterator nullIter = {NULL, 0};
@@ -259,7 +259,7 @@ T_Iterator t_vector_iter_at(const T_Vector *vector, size_t index)
     }
 
     T_Iterator iter;
-    iter.pointer = vector->data + (index * vector->typeSize);
+    iter.pointer = (char *)vector->data + (index * vector->typeSize);
     iter.typeSize = vector->typeSize;
     return iter;
 }
@@ -267,22 +267,20 @@ T_Iterator t_vector_iter_at(const T_Vector *vector, size_t index)
 void t_vector_iter_next(T_Iterator *iterator)
 {
     assert(iterator != NULL);
-    iterator->pointer += iterator->typeSize;
+    iterator->pointer = (char *)iterator->pointer + iterator->typeSize;
 }
 void t_vector_iter_previous(T_Iterator *iterator)
 {
     assert(iterator != NULL);
-    iterator->pointer -= iterator->typeSize;
+    iterator->pointer = (char *)iterator->pointer - iterator->typeSize;
 }
 
 size_t _t_vector_offset(const T_Vector *vector, T_Iterator iterator)
 {
-    if (iterator.pointer < vector->data || iterator.pointer > vector->data + vector->size * vector->typeSize)
+    if ((char *)iterator.pointer < (char *)vector->data || (char *)iterator.pointer > (char *)vector->data + vector->size * vector->typeSize)
     {
-        printf("\x1B[31m"
-               "Iterator out of bounds.\n"
-               "\x1B[0m");
-        return SIZE_MAX;
+      fprintf(stderr, "Iterator out of bounds.\n");
+        return 0;
     }
     return (size_t)((char *)iterator.pointer - (char *)vector->data);
 }
@@ -321,11 +319,11 @@ int _t_vector_move_right(T_Vector *vector, T_Iterator iterator)
     assert(vector->data != NULL);
 
     size_t offset = _t_vector_offset(vector, iterator);
-    if (offset == SIZE_MAX)
+    if (offset == 0)
     {
         return T_VECTOR_ERROR;
     }
-    memcpy(vector->data + offset + vector->typeSize, vector->data + offset, vector->size * vector->typeSize - offset);
+    memcpy((char *)vector->data + offset + vector->typeSize, (char *)vector->data + offset, vector->size * vector->typeSize - offset);
     return T_VECTOR_SUCCESS;
 }
 
@@ -335,10 +333,10 @@ int _t_vector_move_left(T_Vector *vector, T_Iterator iterator)
     assert(vector->data != NULL);
 
     size_t offset = _t_vector_offset(vector, iterator);
-    if (offset == SIZE_MAX)
+    if (offset == 0)
     {
         return T_VECTOR_ERROR;
     }
-    memcpy(vector->data + offset, vector->data + offset + vector->typeSize, (vector->size - 1) * vector->typeSize - offset);
+    memcpy((char *)vector->data + offset, (char *)vector->data + offset + vector->typeSize, (vector->size - 1) * vector->typeSize - offset);
     return T_VECTOR_SUCCESS;
 }

@@ -139,7 +139,7 @@ int t_hasmap_remove(T_HashMap *hashmap, void *key)
     unsigned long hashKey = hashmap->hashFunc(key);
     size_t hashIndex = hashKey % hashmap->bucketsLength;
     T_Vector *targetBucket = &(hashmap->buckets[hashIndex].vector);
-    for (int i = 0; i < targetBucket->size; i++)
+    for (size_t i = 0; i < targetBucket->size; i++)
     {
         T_pair_destroy((T_Pair *)t_vector_iter_at(targetBucket, i).pointer);
         t_vector_erase(targetBucket, t_vector_iter_at(targetBucket, i));
@@ -180,7 +180,7 @@ int _t_hashmap_init_buckets(T_HashMap *hashmap)
                "\x1B[0m");
         return T_HASHMAP_ERROR;
     }
-    for (int i = 0; i < hashmap->bucketsLength; i++)
+    for (size_t i = 0; i < hashmap->bucketsLength; i++)
     {
         hashmap->buckets[i].vector = t_vector_init(sizeof(T_Pair));
     }
@@ -231,7 +231,7 @@ T_Pair *_t_hashmap_findPair(T_HashMap *hashmap, void *key)
     unsigned long hashKey = hashmap->hashFunc(key);
     size_t hashIndex = hashKey % hashmap->bucketsLength;
     T_Vector *targetBucket = &(hashmap->buckets[hashIndex].vector);
-    for (int i = 0; i < targetBucket->size; i++)
+    for (size_t i = 0; i < targetBucket->size; i++)
     {
         if (hashmap->equalFunc(key, ((T_Pair *)targetBucket->data)->first))
         {
@@ -243,9 +243,9 @@ T_Pair *_t_hashmap_findPair(T_HashMap *hashmap, void *key)
 
 int _t_hashMap_Rehashing(T_HashMap *source, T_HashMap *destination)
 {
-    for (int i = 0; i < source->bucketsLength; i++)
+    for (size_t i = 0; i < source->bucketsLength; i++)
     {
-        for (int j = 0; j < source->buckets[i].vector.size; j++)
+        for (size_t j = 0; j < source->buckets[i].vector.size; j++)
         {
             T_Pair pair = T_VECTOR_GET_VALUE_AS(T_Pair, &source->buckets[i].vector, j);
             if (t_hashmap_assign(destination, pair.first, pair.second) == T_HASHMAP_ERROR)

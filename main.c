@@ -1,52 +1,34 @@
 #include <stdio.h>
-#include <stdbool.h>
-
-#include "global/hashMap/hashmap.h"
-#include "global/utilities/hash.h"
-#include "global/utilities/func.h"
-
-struct Product
-{
-    int id;
-    char *name;
-    char *timeStemp;
-    size_t price;
-};
-
-struct Product createProduct(int id, char *name, char *timeStemp, size_t price)
-{
-    struct Product product;
-    product.id = id;
-    product.name = name;
-    product.price = price;
-    product.timeStemp = timeStemp;
-    return product;
-}
-
-const void displayProduct(const void *element)
-{
-    struct Product *product = (struct Product *)element;
-    printf("---%d---\n", product->id);
-    printf("name: %s\n", product->name);
-    printf("timeStemp: %s\n", product->timeStemp);
-    printf("price: %d\n", product->price);
-}
+#include "global/redBlackTree/tree.h"
 
 int main()
 {
-    T_HashMap hashmap = t_hashmap_init(sizeof(int), sizeof(struct Product), t_utilities_hash_int, t_utilities_equalInt);
-    struct Product shampoo = createProduct(101, "Shampoo", "16/05/2567", 299);
-    struct Product toothpaste = createProduct(103, "Tootpaste", "15/05/2567", 199);
-    t_hashmap_put(&hashmap, &shampoo.id, &shampoo);
-    t_hashmap_put(&hashmap, &toothpaste.id, &toothpaste);
-    for (int i = 0; i < hashmap.bucketsLength; i++)
+    T_RedBlack_Tree tree = t_redblack_tree_init(sizeof(int), sizeof(int), t_utilities_compareInt, t_utilities_equalInt);
+    int id[8] = {42, 10, 64, 7, 29, 50, 83, 31};
+
+    for (size_t i = 0; i < sizeof(id) / sizeof(id[0]); i++)
     {
-        printf("Bucket: %d\n", i);
-        for (int j = 0; j < hashmap.buckets[i].vector.size; j++)
-        {
-            T_Pair pair = T_VECTOR_GET_VALUE_AS(T_Pair, &hashmap.buckets[i].vector, j);
-            displayProduct(pair.second);
-        }
+        t_redblack_tree_insert(&tree, &id[i], &id[i]);
     }
+
+    t_redblack_displayBreadth(&tree, t_utilities_display_int, t_utilities_display_int);
+
+    int delete_id = 10;
+
+    t_redblack_tree_remove(&tree, &delete_id);
+
+    delete_id = 31;
+
+    t_redblack_tree_remove(&tree, &delete_id);
+    delete_id = 7;
+
+    t_redblack_tree_remove(&tree, &delete_id);
+    delete_id = 29;
+
+    t_redblack_tree_remove(&tree, &delete_id);
+    printf("\n\n");
+    t_redblack_displayBreadth(&tree, t_utilities_display_int, t_utilities_display_int);
+
+    t_redblack_tree_destroy(&tree);
     return 0;
 }

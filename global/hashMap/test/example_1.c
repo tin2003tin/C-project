@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "../hashmap.h"
-#include "../../AVL orderMap/map.h"
+#include "../AVL_orderMap/map.h"
 
 int main()
 {

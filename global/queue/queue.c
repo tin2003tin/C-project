@@ -168,7 +168,7 @@ int t_queue_enqueue(T_Queue *queue, void *element)
         }
     }
 
-    memcpy(queue->first + queue->size * queue->typeSize, element, queue->typeSize);
+    memcpy((char *)queue->first + queue->size * queue->typeSize, element, queue->typeSize);
 
     queue->size++;
 
@@ -186,7 +186,7 @@ int t_queue_dequeue(T_Queue *queue)
         return T_QUEUE_ERROR;
     }
 
-    queue->first += queue->typeSize;
+    queue->first = (char *)queue->first + queue->typeSize;
     queue->size--;
 
     if (_t_queue_should_shrink(queue))
@@ -221,7 +221,7 @@ void *t_queue_roar(const T_Queue *queue)
         printf("\x1B[31mQueue is empty.\n\x1B[0m");
         return NULL;
     }
-    return queue->first + (queue->size - 1) * queue->typeSize;
+    return (char *)queue->first + (queue->size - 1) * queue->typeSize;
 }
 
 bool t_queue_isEmpty(const T_Queue *queue)
@@ -235,7 +235,7 @@ void t_queue_display(const T_Queue *queue, T_DisplayFunc displayFunc)
 {
     for (size_t i = 0; i < queue->size; i++)
     {
-        displayFunc(queue->first + i * queue->typeSize);
+        displayFunc((char *)queue->first + i * queue->typeSize);
     }
 }
 
@@ -245,7 +245,7 @@ bool _t_queue_growable(const T_Queue *queue)
     // printf("first %d\n", queue->first);
     // printf("next %d\n", queue->first + queue->size * queue->typeSize);
     // printf("cap %d\n", queue->data + (queue->capacity * (queue->growCond) / 100) * queue->typeSize);
-    if (queue->first + queue->size * queue->typeSize >= queue->data + (queue->capacity * (queue->growCond) / 100) * queue->typeSize)
+    if ((char *)queue->first + queue->size * queue->typeSize >= (char *)queue->data + (queue->capacity * (queue->growCond) / 100) * queue->typeSize)
     {
         return true;
     }
