@@ -5,7 +5,7 @@
 int main()
 {
     T_HashMap hashmap = t_hashmap_init(sizeof(int), sizeof(int), t_utilities_hash_int, t_utilities_equalInt);
-    for (int i = 1; i < 10001; i++)
+    for (int i = 1; i < 1001; i++)
     {
         int age = 5 * i;
         t_hashmap_put(&hashmap, &i, &age);
@@ -15,11 +15,11 @@ int main()
     printf("bucketLength: %d\n", hashmap.bucketsLength);
     for (int i = 0; i < hashmap.bucketsLength; i++)
     {
-        // printf("bucket %d\n", i + 1);
+        printf("bucket %d\n", i + 1);
         for (int j = 0; j < hashmap.buckets[i].vector.size; j++)
         {
             T_Pair pair = T_VECTOR_GET_VALUE_AS(T_Pair, &hashmap.buckets[i].vector, j);
-            // t_pair_display(&pair, t_utilities_display_int, t_utilities_display_int);
+            t_pair_display(&pair, t_utilities_display_int, t_utilities_display_int);
             size_t size = hashmap.buckets[i].vector.size;
             void *found = t_AVL_ordermap_find(&map, &size);
             if (found == NULL)
@@ -33,7 +33,7 @@ int main()
                 t_AVL_ordermap_edit(&map, &size, &new);
             }
         }
-        // printf("\n");
+        printf("\n");
     }
     t_AVL_ordermap_display(&map, t_utilities_display_int, t_utilities_display_int);
 

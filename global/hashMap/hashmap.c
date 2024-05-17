@@ -70,7 +70,7 @@ int t_hashmap_put(T_HashMap *hashmap, void *key, void *value)
     assert(key != NULL);
     assert(value != NULL);
 
-    if (t_hashmap_find(hashmap, key) != NULL)
+    if (_t_hashmap_findPair(hashmap, key) != NULL)
     {
         printf("\x1B[31m"
                "The key is already in hashMap\n"
