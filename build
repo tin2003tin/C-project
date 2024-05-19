@@ -13,21 +13,8 @@ if make; then
     build_time=$((end_build - start_build))
     echo -e "${GREEN}Build global successful in ${build_time} milliseconds.${NC}"
     
-    echo -e "${BLUE}Trying to run main.${NC}"
-    
-    start_run=$(date +%s%3N)
-    if ./bin/out/program; then
-        end_run=$(date +%s%3N)
-        run_time=$((end_run - start_run))
-        echo -e "${GREEN}Execution of main successful in ${run_time} milliseconds.${NC}"
-    else
-        echo -e "${RED}Execution of main failed.${NC}"
-    fi
 else
     end_build=$(date +%s%3N)
     build_time=$((end_build - start_build))
     echo -e "${RED}Build global failed in ${build_time} milliseconds.${NC}"
-    echo -e "${RED}Compilation failed. Unable to run the program.${NC}"
 fi
-
-make clean &> /dev/null
